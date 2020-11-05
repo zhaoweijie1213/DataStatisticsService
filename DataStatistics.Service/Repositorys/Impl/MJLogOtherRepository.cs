@@ -8,13 +8,14 @@ namespace DataStatistics.Service.Repositorys.Impl
 {
     public class MJLogOtherRepository : BaseRepository, IMJLogOtherRepository
     {
-        private ILogger<MJLogOtherRepository> _logger;
+        private readonly ILogger<MJLogOtherRepository> _logger;
         public MJLogOtherRepository(ILogger<MJLogOtherRepository> logger, string ConnectionString) :base(ConnectionString)
         {
             _logger = logger;
         }
+
         /// <summary>
-        /// 获取元数据
+        /// 获取用户活动元数据
         /// </summary>
         /// <returns></returns>
         public List<UserActionModel> GetUserActions()

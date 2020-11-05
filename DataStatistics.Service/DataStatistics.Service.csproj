@@ -10,14 +10,11 @@
     <PackageReference Include="FluentData" Version="3.0.2" />
     <PackageReference Include="MySql.Data" Version="8.0.22" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Quartz" Version="3.2.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DataStatistics.Model\DataStatistics.Model.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Quartz\" />
   </ItemGroup>
 
 </Project>

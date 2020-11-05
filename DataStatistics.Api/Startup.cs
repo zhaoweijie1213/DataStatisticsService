@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using DataStatistics.Api.Controllers;
+using DataStatistics.Service.Quartz;
+using DataStatistics.Service.Quartz.Impl;
 using DataStatistics.Service.Repositorys;
 using DataStatistics.Service.Repositorys.Impl;
 using DataStatistics.Service.Services;
@@ -37,10 +39,12 @@ namespace DataStatistics.Api
             //redis数据库
             services.AddEasyCaching(option =>
             {
-                option.UseRedis(Configuration, "myredisname", "easycaching:redis");
+                option.UseRedis(Configuration, "myredisname", "easycaching:redis").WithJson();
             });
             services.AddSingleton<ICacheManage, CacheManage>();
             services.AddScoped<IDataService, DataService>();
+            //调度器
+            services.AddSingleton<IQuartzManager, QuartzManager>();
             services.AddScoped<IMJLogOtherRepository>(option =>
             {
                 var log = option.GetServices<ILogger<MJLogOtherRepository>>();
@@ -92,13 +96,24 @@ namespace DataStatistics.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,IHostApplicationLifetime applicationLifetime)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+            var quartz = app.ApplicationServices.GetRequiredService<IQuartzManager>();
 
+            #region 调度器程序启动
+            applicationLifetime.ApplicationStarted.Register(() =>
+            {
+                quartz.LoadScheduleJob(app.ApplicationServices);
+            });
+            applicationLifetime.ApplicationStopped.Register(() =>
+            {
+                quartz.EndScheduler();
+            });
+            #endregion
             app.UseSwagger();
             app.UseSwaggerUI(c => {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "DataStatisticsService V1");

@@ -15,9 +15,9 @@ namespace DataStatistics.Api.Controllers
     [ApiController]
     public class DataStatisticsController : BaseController
     {
-        private ILogger<DataStatisticsController> _logger;
-        private IDataService _service;
-        private ICacheManage  _cache;
+        private readonly ILogger<DataStatisticsController> _logger;
+        private readonly IDataService _service;
+        private readonly ICacheManage  _cache;
         public DataStatisticsController(ILogger<DataStatisticsController> logger,IDataService service, ICacheManage cache)
         {
             _logger = logger;

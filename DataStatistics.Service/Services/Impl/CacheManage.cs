@@ -4,28 +4,37 @@ using EasyCaching.Core;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DataStatistics.Service.Services.Impl
 {
     public class CacheManage : ICacheManage
     {
-        IEasyCachingProviderFactory _factory;
+        readonly IEasyCachingProviderFactory _factory;
         public CacheManage(IEasyCachingProviderFactory factory)
         {
             _factory = factory;
         }
 
         /// <summary>
-        /// 
+        /// 设置缓存
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
         public bool SetUserAction(List<UserActionModel> list)
         {
             //return true;
-            string lists = JsonConvert.SerializeObject(list);
+            //var provider = _factory.GetCachingProvider("myredisname");
             var provider = _factory.GetRedisProvider("myredisname");
-            provider.StringSet("100", lists);
+            var areaids = list.GroupBy(i=>i.areaid).Select(i=>i.Key).ToList();
+            foreach (var areaid in areaids)
+            {
+                var data = list.Where(i=>i.areaid==areaid).ToList();
+                var len = provider.SAdd(areaid.ToString(),data);
+            }
+            string lists = JsonConvert.SerializeObject(list);
+           
+           
             return true;
         }
         /// <summary>
@@ -36,8 +45,10 @@ namespace DataStatistics.Service.Services.Impl
         public List<UserActionModel> GetUserAction()
         {
             var provider = _factory.GetRedisProvider("myredisname");
-            var res=provider.StringGet("100");
-            List<UserActionModel> models = JsonConvert.DeserializeObject<List<UserActionModel>>(res);
+            //var res=provider.LLen("100");
+            var data=provider.LPop<List<UserActionModel>>("100");
+            //List<UserActionModel> models = JsonConvert.DeserializeObject<List<UserActionModel>>(res);
+            List<UserActionModel> models = new List<UserActionModel>();
             return models;
         }
     }

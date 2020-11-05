@@ -9,8 +9,8 @@ namespace DataStatistics.Service.Services.Impl
 {
     public class DataService : IDataService
     {
-        private ILogger<DataService> _logger;
-        private IMJLogOtherRepository _repository;
+        private readonly ILogger<DataService> _logger;
+        private readonly IMJLogOtherRepository _repository;
         public DataService(IMJLogOtherRepository repository, ILogger<DataService> logger)
         {
             _logger = logger;

@@ -4,6 +4,41 @@
         <name>DataStatistics.Model</name>
     </assembly>
     <members>
+        <member name="T:DataStatistics.Model.mj_log_other.OverallSituationModel">
+            <summary>
+            总体情况
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.OverallSituationModel.id">
+            <summary>
+            编号
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.OverallSituationModel.areaid">
+            <summary>
+            区域id
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.OverallSituationModel.activeUsers">
+            <summary>
+            活跃用户
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.OverallSituationModel.registeredUsers">
+            <summary>
+            注册用户
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.OverallSituationModel.platForm">
+            <summary>
+            平台
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.OverallSituationModel.dataTime">
+            <summary>
+            数据时间
+            </summary>
+        </member>
         <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.id">
             <summary>
             Desc:
