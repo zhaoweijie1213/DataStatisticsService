@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DataStatistics.Model</name>
+    </assembly>
+    <members>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.id">
+            <summary>
+            Desc:
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.type">
+            <summary>
+            Desc:
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.date">
+            <summary>
+            Desc:
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.areaid">
+            <summary>
+            Desc:
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.uid">
+            <summary>
+            Desc:
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.version">
+            <summary>
+            Desc:
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.data">
+            <summary>
+            Desc:
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.packageChannel">
+            <summary>
+            Desc:包渠道
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.platForm">
+            <summary>
+            Desc:平台
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.device">
+            <summary>
+            Desc:设备
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+    </members>
+</doc>

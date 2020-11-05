@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DataStatistics.Api</name>
+    </assembly>
+    <members>
+        <member name="T:DataStatistics.Api.Controllers.ApiResult`1">
+            <summary>
+            返回结果对象
+            ApiResult
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="P:DataStatistics.Api.Controllers.ApiResult`1.Code">
+            <summary>
+            执行结果
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Api.Controllers.ApiResult`1.Message">
+            <summary>
+            提示消息
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Api.Controllers.ApiResult`1.Result">
+            <summary>
+            结果
+            </summary>
+        </member>
+        <member name="M:DataStatistics.Api.Controllers.ApiResult`1.Success(`0,System.String)">
+            <summary>
+            成功
+            </summary>
+            <param name="result">返回结果</param>
+            <param name="msg">提示消息</param>
+        </member>
+        <member name="M:DataStatistics.Api.Controllers.ApiResult`1.Error(System.String,System.Int32)">
+            <summary>
+            异常
+            </summary>
+            <param name="msg">提示消息</param>
+            <param name="code"></param>
+        </member>
+        <member name="T:DataStatistics.Api.Controllers.ApiResultFilter">
+            <summary>
+            返回结果重新封装
+            </summary>
+        </member>
+        <member name="M:DataStatistics.Api.Controllers.ApiResultFilter.OnActionExecuted(Microsoft.AspNetCore.Mvc.Filters.ActionExecutedContext)">
+            <summary>
+            Action执行完成,返回结果处理
+            </summary>
+            <param name="actionExecutedContext"></param>
+        </member>
+        <member name="M:DataStatistics.Api.Controllers.DataStatisticsController.GetResult">
+            <summary>
+            测试方法
+            </summary>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
