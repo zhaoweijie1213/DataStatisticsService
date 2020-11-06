@@ -35,7 +35,7 @@ namespace DataStatistics.Api.Controllers
             {
                 var data = _service.GetUserActions();
                 //存入缓存
-                _cache.SetUserAction(data);
+                //_cache.SetUserAction(data);
                 var res = _cache.GetUserAction();
                 return Json(ResultCode.Success, res.Take(100).ToList());
             }

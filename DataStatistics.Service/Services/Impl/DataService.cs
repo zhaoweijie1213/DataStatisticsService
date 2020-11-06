@@ -11,11 +11,17 @@ namespace DataStatistics.Service.Services.Impl
     {
         private readonly ILogger<DataService> _logger;
         private readonly IMJLogOtherRepository _repository;
-        public DataService(IMJLogOtherRepository repository, ILogger<DataService> logger)
+        private readonly ICacheManage _cache;
+        public DataService(IMJLogOtherRepository repository, ILogger<DataService> logger, ICacheManage cache)
         {
             _logger = logger;
             _repository = repository;
+            _cache = cache;
         }
+        /// <summary>
+        /// 数据库获取数据
+        /// </summary>
+        /// <returns></returns>
         public List<UserActionModel> GetUserActions()
         {
             try
@@ -29,5 +35,35 @@ namespace DataStatistics.Service.Services.Impl
                 throw;
             }
         }
+
+        ///// <summary>
+        ///// 昨日概况
+        ///// </summary>
+        ///// <returns></returns>
+        public OverallSituationModel DataSituationForYestoday(int areaid)
+        {
+      
+            return null;
+        }
+
+        /// <summary>
+        /// 近期趋势
+        /// </summary>
+        /// <returns></returns>
+        public string TrendsForAFewDays()
+        {
+            return "";
+        }
+
+        /// <summary>
+        /// 实时数据
+        /// </summary>
+        /// <returns></returns>
+        public string ActiveData()
+        {
+            return "";
+        }
+
+
     }
 }

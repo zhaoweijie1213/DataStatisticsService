@@ -39,13 +39,15 @@ namespace DataStatistics.Api
             //redis数据库
             services.AddEasyCaching(option =>
             {
-                option.UseRedis(Configuration, "myredisname", "easycaching:redis").WithJson();
+                option.UseRedis(Configuration, "userAction", "easycaching:redis").WithJson();
             });
-            services.AddSingleton<ICacheManage, CacheManage>();
+            services.AddTransient<Quartz.IJob, DbStatisticsJob>();
+            services.AddScoped<ICacheManage, CacheManage>();
             services.AddScoped<IDataService, DataService>();
             //调度器
+
             services.AddSingleton<IQuartzManager, QuartzManager>();
-            services.AddScoped<IMJLogOtherRepository>(option =>
+            services.AddSingleton<IMJLogOtherRepository>(option =>
             {
                 var log = option.GetServices<ILogger<MJLogOtherRepository>>();
                 return new MJLogOtherRepository(log.FirstOrDefault(), Configuration.GetConnectionString("mj_log_other_mysql"));
@@ -102,7 +104,7 @@ namespace DataStatistics.Api
             {
                 app.UseDeveloperExceptionPage();
             }
-            var quartz = app.ApplicationServices.GetRequiredService<IQuartzManager>();
+            var quartz = app.ApplicationServices.GetService<IQuartzManager>();
 
             #region 调度器程序启动
             applicationLifetime.ApplicationStarted.Register(() =>

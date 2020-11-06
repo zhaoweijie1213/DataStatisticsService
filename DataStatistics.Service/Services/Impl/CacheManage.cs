@@ -11,9 +11,11 @@ namespace DataStatistics.Service.Services.Impl
     public class CacheManage : ICacheManage
     {
         readonly IEasyCachingProviderFactory _factory;
+        public IRedisCachingProvider _redisProvider { get; set; }
         public CacheManage(IEasyCachingProviderFactory factory)
         {
             _factory = factory;
+            _redisProvider = factory.GetRedisProvider("userAction");
         }
 
         /// <summary>
@@ -25,16 +27,13 @@ namespace DataStatistics.Service.Services.Impl
         {
             //return true;
             //var provider = _factory.GetCachingProvider("myredisname");
-            var provider = _factory.GetRedisProvider("myredisname");
             var areaids = list.GroupBy(i=>i.areaid).Select(i=>i.Key).ToList();
             foreach (var areaid in areaids)
             {
                 var data = list.Where(i=>i.areaid==areaid).ToList();
-                var len = provider.SAdd(areaid.ToString(),data);
+                var len = _redisProvider.SAdd(areaid.ToString(),data);
             }
             string lists = JsonConvert.SerializeObject(list);
-           
-           
             return true;
         }
         /// <summary>
@@ -44,11 +43,11 @@ namespace DataStatistics.Service.Services.Impl
         /// <returns></returns>
         public List<UserActionModel> GetUserAction()
         {
-            var provider = _factory.GetRedisProvider("myredisname");
             //var res=provider.LLen("100");
-            var data=provider.LPop<List<UserActionModel>>("100");
+            //var data=provider.SRandMember<UserActionModel>("100");
+            var data= _redisProvider.SMembers<UserActionModel>("1200");
             //List<UserActionModel> models = JsonConvert.DeserializeObject<List<UserActionModel>>(res);
-            List<UserActionModel> models = new List<UserActionModel>();
+            List<UserActionModel> models = data;
             return models;
         }
     }

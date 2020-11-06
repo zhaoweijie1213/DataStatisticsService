@@ -12,10 +12,6 @@ namespace DataStatistics.Service.Repositorys.Impl
         /// 连接字符串
         /// </summary>
         protected string ConnectionString { get; set; }
-        public BaseRepository(string connectionString)
-        {
-            ConnectionString = connectionString;
-        }
         /// <summary>
         /// 创建实例
         /// </summary>

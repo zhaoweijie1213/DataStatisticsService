@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DataStatistics.Service.Repositorys
 {
-    public interface IMJLogOtherRepository
+    public interface IMJLogOtherRepository : IBaseRepository
     {
         /// <summary>
         /// 获取元数据

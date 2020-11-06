@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using DataStatistics.Service.Repositorys;
+using Microsoft.Extensions.Logging;
 using Quartz;
 using Quartz.Impl;
 using System;
@@ -14,11 +15,14 @@ namespace DataStatistics.Service.Quartz.Impl
         /// </summary>
         private readonly ILogger<QuartzManager> _logger;
         public IScheduler Scheduler { get; set; }
-        public QuartzManager(ILogger<QuartzManager> logger)
+
+        public QuartzManager(ILogger<QuartzManager> logger, IServiceProvider IocContainer)
         {
             _logger = logger;
             var schedulerFactory = new StdSchedulerFactory();
+            IOCJobFactory iocJobfactory = new IOCJobFactory(IocContainer);
             Scheduler = schedulerFactory.GetScheduler().Result;
+            Scheduler.JobFactory = iocJobfactory;
             Scheduler.Start().Wait();
         }
         /// <summary>
@@ -30,10 +34,11 @@ namespace DataStatistics.Service.Quartz.Impl
             {
 
                 //创建任务
-                var job = JobBuilder.Create<DbStatisticsJob>()
+                var job = JobBuilder.Create<IJob>()
                     .WithIdentity("DbStatisticsJob", "DbStatisticsGroup")
                     .Build();
-                job.JobDataMap.Add("Provider", serviceProvider);
+
+                //job.JobDataMap.Add("Provider", serviceProvider);
 
                 //创建触发器
                 var trigger = TriggerBuilder.Create()
@@ -41,7 +46,7 @@ namespace DataStatistics.Service.Quartz.Impl
                     .StartNow()
                  //   .WithSimpleSchedule(x => x
                  //.WithIntervalInSeconds(15).RepeatForever())
-                 .WithCronSchedule("//0 0 0 ? * *")//0 0 6 ? * *每天六点触发
+                 .WithCronSchedule("0 0/1 * * * ? *")//0 0 6 ? * *每天六点触发
                  .Build();
                 //调度器添加任务
                 Scheduler.ScheduleJob(job, trigger).Wait();
