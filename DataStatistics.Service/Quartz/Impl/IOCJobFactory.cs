@@ -6,6 +6,9 @@ using System.Text;
 
 namespace DataStatistics.Service.Quartz.Impl
 {
+    /// <summary>
+    /// 自定义JobFactory
+    /// </summary>
     public class IOCJobFactory : IJobFactory
     {
         protected readonly IServiceProvider Container;
@@ -14,8 +17,7 @@ namespace DataStatistics.Service.Quartz.Impl
             Container = container;
         }
         /// <summary>
-        /// Called by the scheduler at the time of the trigger firing, in order to produce
-        /// a Quartz.IJob instance on which to call Execute.
+        /// 在触发触发器时由调度程序调用,生成调用execute的job实例
         /// </summary>
         /// <param name="bundle"></param>
         /// <param name="scheduler"></param>

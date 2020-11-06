@@ -40,10 +40,18 @@ namespace DataStatistics.Service.Services.Impl
         ///// 昨日概况
         ///// </summary>
         ///// <returns></returns>
-        public OverallSituationModel DataSituationForYestoday(int areaid)
+        public List<OverallSituationModel> DataSituationForYestoday(int areaid)
         {
-      
-            return null;
+            try
+            {
+                var res = _repository.GetSituation(areaid);
+                return res;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"DataSituationForYestoday:{e.Message}");
+                throw;
+            } 
         }
 
         /// <summary>

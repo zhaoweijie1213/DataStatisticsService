@@ -1,7 +1,11 @@
-﻿using DataStatistics.Model.mj_log_other;
+﻿using Dapper;
+using Dapper.Contrib.Extensions;
+using DataStatistics.Model.mj_log_other;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace DataStatistics.Service.Repositorys.Impl
@@ -25,12 +29,53 @@ namespace DataStatistics.Service.Repositorys.Impl
         {
             try
             {
-                var res = _db.Sql("select * from log_userAction where date <='2020-11-05' and date>'2020-11-04' ").QueryMany<UserActionModel>();
+                var res = _db.Query<UserActionModel>("select * from log_userAction where date <='2020-11-05' and date>'2020-11-04' ").ToList();
                 return res;
             }
             catch (Exception e)
             {
                 _logger.LogError($"GetUserActions:{e.Message}");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 获取概况
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <param name="time"></param>
+        /// <returns></returns>
+        public List<OverallSituationModel> GetSituation(int areaid)
+        {
+            try
+            {
+                string sql = $"select * from log_overall_situation where areaid={areaid} and dataTime='{DateTime.Now.Date.AddDays(-1)}'";
+                var res = _db.Query<OverallSituationModel>(sql).ToList();
+                return res;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"GetSituation:{e.Message}");
+                throw;
+            }
+        }
+        /// <summary>
+        /// 新增数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="models"></param>
+        /// <param name="ignoreProperties">忽略的列</param>
+        /// <returns></returns>
+        public long Insert<T>(List<T> list)
+        {
+            try
+            {
+                long res = _db.Insert(list);
+                return res;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Inster:{e.Message}");
                 throw;
             }
         }

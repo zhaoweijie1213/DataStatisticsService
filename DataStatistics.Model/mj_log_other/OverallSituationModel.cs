@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace DataStatistics.Model.mj_log_other
@@ -7,11 +8,18 @@ namespace DataStatistics.Model.mj_log_other
     /// <summary>
     /// 总体情况
     /// </summary>
+    [Table("log_overall_situation")]
     public class OverallSituationModel
     {
+        public OverallSituationModel()
+        {
+            activeUsers = 0;
+            registeredUsers = 0;
+        }
         /// <summary>
         /// 编号
         /// </summary>
+        [NotMapped]
         public int id { get; set; }
         /// <summary>
         /// 区域id

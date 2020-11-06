@@ -51,9 +51,9 @@
             </summary>
             <param name="actionExecutedContext"></param>
         </member>
-        <member name="M:DataStatistics.Api.Controllers.DataStatisticsController.GetResult">
+        <member name="M:DataStatistics.Api.Controllers.DataStatisticsController.DataSituationForYestoday(System.Int32)">
             <summary>
-            测试方法
+            昨日概况
             </summary>
             <returns></returns>
         </member>

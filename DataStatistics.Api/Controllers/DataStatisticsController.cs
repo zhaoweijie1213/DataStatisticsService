@@ -17,32 +17,27 @@ namespace DataStatistics.Api.Controllers
     {
         private readonly ILogger<DataStatisticsController> _logger;
         private readonly IDataService _service;
-        private readonly ICacheManage  _cache;
-        public DataStatisticsController(ILogger<DataStatisticsController> logger,IDataService service, ICacheManage cache)
+        public DataStatisticsController(ILogger<DataStatisticsController> logger,IDataService service)
         {
             _logger = logger;
             _service = service;
-            _cache = cache;
         }
         /// <summary>
-        /// 测试方法
+        /// 昨日概况
         /// </summary>
         /// <returns></returns>
-        [HttpGet("GetResult")]
-        public ApiResult<List<UserActionModel>> GetResult()
+        [HttpGet("DataSituationForYestoday")]
+        public ApiResult<List<OverallSituationModel>> DataSituationForYestoday(int areaid)
         {
             try
             {
-                var data = _service.GetUserActions();
-                //存入缓存
-                //_cache.SetUserAction(data);
-                var res = _cache.GetUserAction();
-                return Json(ResultCode.Success, res.Take(100).ToList());
+                var data = _service.DataSituationForYestoday(areaid);
+                return Json(ResultCode.Success, data);
             }
             catch (Exception e)
             {
                 _logger.LogError($"GetResult:{e.Message}");
-                return Json<List<UserActionModel>>(ResultCode.Error, null, "操作失败");
+                return Json<List<OverallSituationModel>>(ResultCode.Error, null, "操作失败");
             }
             
         }

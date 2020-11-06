@@ -5,9 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.35" />
+    <PackageReference Include="Dapper.Contrib" Version="2.0.35" />
     <PackageReference Include="EasyCaching.Core" Version="0.9.0" />
     <PackageReference Include="EasyCaching.Redis" Version="0.9.0" />
-    <PackageReference Include="FluentData" Version="3.0.2" />
     <PackageReference Include="MySql.Data" Version="8.0.22" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Quartz" Version="3.2.3" />

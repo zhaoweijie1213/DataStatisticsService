@@ -10,7 +10,6 @@ using DataStatistics.Service.Repositorys;
 using DataStatistics.Service.Repositorys.Impl;
 using DataStatistics.Service.Services;
 using DataStatistics.Service.Services.Impl;
-using FluentData.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -35,7 +34,6 @@ namespace DataStatistics.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddFluentData();
             //redis数据库
             services.AddEasyCaching(option =>
             {
@@ -104,7 +102,7 @@ namespace DataStatistics.Api
             {
                 app.UseDeveloperExceptionPage();
             }
-            var quartz = app.ApplicationServices.GetService<IQuartzManager>();
+            var quartz = app.ApplicationServices.GetRequiredService<IQuartzManager>();
 
             #region 调度器程序启动
             applicationLifetime.ApplicationStarted.Register(() =>

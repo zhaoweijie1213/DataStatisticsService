@@ -1,6 +1,7 @@
 ﻿using DataStatistics.Model.mj_log_other;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace DataStatistics.Service.Repositorys
@@ -12,5 +13,19 @@ namespace DataStatistics.Service.Repositorys
         /// </summary>
         /// <returns></returns>
         List<UserActionModel> GetUserActions();
+        /// <summary>
+        /// 新增数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        long Insert<T>(List<T> list);
+        /// <summary>
+        /// 获取概况
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <param name="time"></param>
+        /// <returns></returns>
+        List<OverallSituationModel> GetSituation(int areaid);
     }
 }

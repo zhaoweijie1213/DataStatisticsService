@@ -46,7 +46,7 @@ namespace DataStatistics.Service.Quartz.Impl
                     .StartNow()
                  //   .WithSimpleSchedule(x => x
                  //.WithIntervalInSeconds(15).RepeatForever())
-                 .WithCronSchedule("0 0/1 * * * ? *")//0 0 6 ? * *每天六点触发
+                 .WithCronSchedule("0 0 0 1/1 * ?")//每天00:00:00触发
                  .Build();
                 //调度器添加任务
                 Scheduler.ScheduleJob(job, trigger).Wait();

@@ -12,5 +12,10 @@ namespace DataStatistics.Service.Services
         /// </summary>
         /// <returns></returns>
         List<UserActionModel> GetUserActions();
+        ///// <summary>
+        ///// 昨日概况
+        ///// </summary>
+        ///// <returns></returns>
+        List<OverallSituationModel> DataSituationForYestoday(int areaid);
     }
 }

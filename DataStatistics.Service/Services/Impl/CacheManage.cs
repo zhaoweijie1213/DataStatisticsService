@@ -15,7 +15,7 @@ namespace DataStatistics.Service.Services.Impl
         public CacheManage(IEasyCachingProviderFactory factory)
         {
             _factory = factory;
-            _redisProvider = factory.GetRedisProvider("userAction");
+            _redisProvider = _factory.GetRedisProvider("userAction");
         }
 
         /// <summary>
@@ -43,10 +43,7 @@ namespace DataStatistics.Service.Services.Impl
         /// <returns></returns>
         public List<UserActionModel> GetUserAction()
         {
-            //var res=provider.LLen("100");
-            //var data=provider.SRandMember<UserActionModel>("100");
             var data= _redisProvider.SMembers<UserActionModel>("1200");
-            //List<UserActionModel> models = JsonConvert.DeserializeObject<List<UserActionModel>>(res);
             List<UserActionModel> models = data;
             return models;
         }

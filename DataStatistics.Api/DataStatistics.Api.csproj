@@ -27,5 +27,9 @@
     <ProjectReference Include="..\DataStatistics.Service\DataStatistics.Service.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Model\" />
+  </ItemGroup>
+
 
 </Project>
