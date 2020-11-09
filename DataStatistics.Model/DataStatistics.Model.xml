@@ -109,5 +109,15 @@
             Nullable:False
             </summary>
         </member>
+        <member name="P:DataStatistics.Model.ViewModel.ThirtyDaysDataModel.Active">
+            <summary>
+            活跃
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.ThirtyDaysDataModel.Register">
+            <summary>
+            注册
+            </summary>
+        </member>
     </members>
 </doc>

@@ -53,7 +53,7 @@ namespace DataStatistics.Service.Quartz.Impl
                         areaid = Convert.ToInt32(key),
                         activeUsers = data.Where(i => i.uid != 0).Count(),
                         registeredUsers = data.Where(i => i.uid == 0).Count(),
-                        platForm = "all",
+                        platForm = "All",
                         dataTime= startTime,
                     };
                     list.Add(all);

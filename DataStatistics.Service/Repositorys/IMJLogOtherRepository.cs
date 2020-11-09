@@ -27,5 +27,12 @@ namespace DataStatistics.Service.Repositorys
         /// <param name="time"></param>
         /// <returns></returns>
         List<OverallSituationModel> GetSituation(int areaid);
+        /// <summary>
+        /// 近期情况
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <param name="time"></param>
+        /// <returns></returns>
+        List<OverallSituationModel> GetThirtyDaysData(int areaid, DateTime time);
     }
 }

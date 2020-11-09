@@ -57,5 +57,13 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:DataStatistics.Api.Controllers.DataStatisticsController.ThirtyDaysData(System.Int32,System.DateTime)">
+            <summary>
+            30天数据
+            </summary>
+            <param name="areaid"></param>
+            <param name="time"></param>
+            <returns></returns>
+        </member>
     </members>
 </doc>

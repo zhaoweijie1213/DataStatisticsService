@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DataStatistics.Api.Enums;
 using DataStatistics.Model.mj_log_other;
+using DataStatistics.Model.ViewModel;
 using DataStatistics.Service.Services;
 using log4net.Core;
 using Microsoft.AspNetCore.Mvc;
@@ -40,6 +41,27 @@ namespace DataStatistics.Api.Controllers
                 return Json<List<OverallSituationModel>>(ResultCode.Error, null, "操作失败");
             }
             
+        }
+        /// <summary>
+        /// 30天数据
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <param name="time"></param>
+        /// <returns></returns>
+        [HttpGet("ThirtyDaysData")]
+        public ApiResult<ThirtyDaysDataModel> ThirtyDaysData(int areaid,DateTime time)
+        {
+            try
+            {
+                var data = _service.ThirtyDaysData(areaid, time);
+                return Json(ResultCode.Success, data);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"GetResult:{e.Message}");
+                return Json<ThirtyDaysDataModel>(ResultCode.Error, null, "操作失败");
+            }
+
         }
     }
 }

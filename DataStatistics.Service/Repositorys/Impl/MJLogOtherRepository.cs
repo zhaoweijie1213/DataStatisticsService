@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Dapper.Contrib.Extensions;
 using DataStatistics.Model.mj_log_other;
+using DataStatistics.Model.ViewModel;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -49,7 +50,8 @@ namespace DataStatistics.Service.Repositorys.Impl
         {
             try
             {
-                string sql = $"select * from log_overall_situation where areaid={areaid} and dataTime='{DateTime.Now.Date.AddDays(-1)}'";
+                //string sql = $"select * from log_overall_situation where areaid={areaid} and dataTime='{DateTime.Now.Date.AddDays(-1)}'";
+                string sql = $"select * from log_overall_situation where areaid={areaid} and dataTime='2020-11-05 00:00:00'";
                 var res = _db.Query<OverallSituationModel>(sql).ToList();
                 return res;
             }
@@ -63,8 +65,7 @@ namespace DataStatistics.Service.Repositorys.Impl
         /// 新增数据
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="models"></param>
-        /// <param name="ignoreProperties">忽略的列</param>
+        /// <param name="list"></param>
         /// <returns></returns>
         public long Insert<T>(List<T> list)
         {
@@ -76,6 +77,27 @@ namespace DataStatistics.Service.Repositorys.Impl
             catch (Exception e)
             {
                 _logger.LogError($"Inster:{e.Message}");
+                throw;
+            }
+        }
+        /// <summary>
+        /// 近期情况
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <param name="time"></param>
+        /// <returns></returns>
+        public List<OverallSituationModel> GetThirtyDaysData(int areaid,DateTime time)
+        {
+            try
+            {
+                //string sql = $"select * from log_overall_situation where areaid={areaid} and dataTime='{DateTime.Now.Date.AddDays(-1)}'";
+                string sql = $"select * from log_overall_situation where areaid={areaid} and dataTime >='{time}'";
+                var res = _db.Query<OverallSituationModel>(sql).ToList();
+                return res;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"GetSituation:{e.Message}");
                 throw;
             }
         }
