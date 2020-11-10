@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using DataStatistics.Model.mj_log_other;
 using DataStatistics.Model.ViewModel;
+using DataStatistics.Service.Enums;
 using DataStatistics.Service.Repositorys;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic.CompilerServices;
@@ -147,10 +148,16 @@ namespace DataStatistics.Service.Services.Impl
                     //时间段内数据
                     var dataItem = list.Where(i => i.date >= st && i.date < et);
                     //活跃用户
-                    var activeUser = dataItem.Where(i => i.uid != 0).GroupBy(i => i.uid).Count();
+                    data.Active.All.Add(dataItem.Where(i => i.uid != 0).GroupBy(i => i.uid).Count());
+                    data.Active.Android.Add(dataItem.Where(i => i.uid != 0&&i.platForm==   PlatFromEnum.Android.GetName()).GroupBy(i => i.uid).Count());
+                    data.Active.IOS.Add(dataItem.Where(i => i.uid != 0&&i.platForm== "IOS").GroupBy(i => i.uid).Count());
+                    data.Active.Windows.Add(dataItem.Where(i => i.uid != 0&&i.platForm== "Windows").GroupBy(i => i.uid).Count());
 
                     //注册用户
-                    var registerUser = dataItem.Where(i => i.uid == 0).Count();
+                    data.Register.All.Add(dataItem.Where(i => i.uid == 0).Count());
+                    data.Register.Android.Add(dataItem.Where(i => i.uid == 0&&i.platForm== "Android").Count());
+                    data.Register.IOS.Add(dataItem.Where(i => i.uid == 0 && i.platForm == "Android").Count());
+                    data.Register.Windows.Add(dataItem.Where(i => i.uid == 0 && i.platForm == "Android").Count());
                 }
             }
             catch (Exception e)
