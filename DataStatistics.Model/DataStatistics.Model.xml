@@ -48,14 +48,14 @@
         </member>
         <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.type">
             <summary>
-            Desc:
+            Desc:类型
             Default:
             Nullable:False
             </summary>
         </member>
         <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.date">
             <summary>
-            Desc:
+            Desc:时间
             Default:
             Nullable:False
             </summary>
@@ -76,14 +76,14 @@
         </member>
         <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.version">
             <summary>
-            Desc:
+            Desc:版本
             Default:
             Nullable:False
             </summary>
         </member>
         <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.data">
             <summary>
-            Desc:
+            Desc:数据
             Default:
             Nullable:False
             </summary>
@@ -109,12 +109,12 @@
             Nullable:False
             </summary>
         </member>
-        <member name="P:DataStatistics.Model.ViewModel.ThirtyDaysDataModel.Active">
+        <member name="P:DataStatistics.Model.ViewModel.DaysDataModel.Active">
             <summary>
             活跃
             </summary>
         </member>
-        <member name="P:DataStatistics.Model.ViewModel.ThirtyDaysDataModel.Register">
+        <member name="P:DataStatistics.Model.ViewModel.DaysDataModel.Register">
             <summary>
             注册
             </summary>

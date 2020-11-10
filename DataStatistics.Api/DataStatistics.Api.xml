@@ -65,5 +65,14 @@
             <param name="time"></param>
             <returns></returns>
         </member>
+        <member name="M:DataStatistics.Api.Controllers.DataStatisticsController.RealTimeData(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            实时数据
+            </summary>
+            <param name="areaid"></param>
+            <param name="type">0:秒,1:分,2:时</param>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
     </members>
 </doc>

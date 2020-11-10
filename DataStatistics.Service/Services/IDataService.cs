@@ -22,6 +22,14 @@ namespace DataStatistics.Service.Services
         /// 近期趋势
         /// </summary>
         /// <returns></returns>
-        ThirtyDaysDataModel ThirtyDaysData(int areaid, DateTime time);
+        DaysDataModel ThirtyDaysData(int areaid, DateTime time);
+        /// <summary>
+        /// 实时数据
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <param name="type">0秒,1分,2时</param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        DaysDataModel RealTimeData(int areaid, int type, int value);
     }
 }

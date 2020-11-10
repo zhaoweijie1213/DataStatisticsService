@@ -37,15 +37,27 @@ namespace DataStatistics.Service.Services.Impl
             return true;
         }
         /// <summary>
-        /// 
+        /// 获取用户数据
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
-        public List<UserActionModel> GetUserAction()
+        public List<UserActionModel> GetUserAction(int areaid)
         {
-            var data= _redisProvider.SMembers<UserActionModel>("1200");
+            var data= _redisProvider.SMembers<UserActionModel>(areaid.ToString());
             List<UserActionModel> models = data;
             return models;
+        }
+
+        /// <summary>
+        /// 获取整个列表
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public List<T> GetAllList<T>(string key)
+        {
+            var length = _redisProvider.LLen(key);
+            var data = _redisProvider.LRange<T>(key,0,length-1);
+            return data;
         }
     }
 }

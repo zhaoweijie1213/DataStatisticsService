@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DataStatistics.Model.ViewModel
 {
-    public class ThirtyDaysDataModel
+    public class DaysDataModel
     {
         /// <summary>
         /// 活跃

@@ -22,6 +22,12 @@ namespace DataStatistics.Service.Services
         /// 获取数据
         /// </summary>
         /// <returns></returns>
-        List<UserActionModel> GetUserAction();
+        List<UserActionModel> GetUserAction(int areaid);
+        /// <summary>
+        /// 获取整个列表
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        List<T> GetAllList<T>(string key);
     }
 }

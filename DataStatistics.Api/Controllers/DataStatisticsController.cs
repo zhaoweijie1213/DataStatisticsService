@@ -49,7 +49,7 @@ namespace DataStatistics.Api.Controllers
         /// <param name="time"></param>
         /// <returns></returns>
         [HttpGet("ThirtyDaysData")]
-        public ApiResult<ThirtyDaysDataModel> ThirtyDaysData(int areaid,DateTime time)
+        public ApiResult<DaysDataModel> ThirtyDaysData(int areaid,DateTime time)
         {
             try
             {
@@ -59,9 +59,31 @@ namespace DataStatistics.Api.Controllers
             catch (Exception e)
             {
                 _logger.LogError($"GetResult:{e.Message}");
-                return Json<ThirtyDaysDataModel>(ResultCode.Error, null, "操作失败");
+                return Json<DaysDataModel>(ResultCode.Error, null, "操作失败");
             }
 
+        }
+        /// <summary>
+        /// 实时数据
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <param name="type">0:秒,1:分,2:时</param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        [HttpGet("RealTimeData")]
+        public ApiResult<DaysDataModel> RealTimeData(int areaid,int type,int value)
+        {
+
+            try
+            {
+                var data = _service.RealTimeData(areaid, type,value);
+                return Json(ResultCode.Success, data);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"GetResult:{e.Message}");
+                return Json<DaysDataModel>(ResultCode.Error, null, "操作失败");
+            }
         }
     }
 }

@@ -17,7 +17,7 @@ namespace DataStatistics.Model.mj_log_other
 
 
         /// <summary>
-        /// Desc:
+        /// Desc:类型
         /// Default:
         /// Nullable:False
         /// </summary>
@@ -26,7 +26,7 @@ namespace DataStatistics.Model.mj_log_other
 
 
         /// <summary>
-        /// Desc:
+        /// Desc:时间
         /// Default:
         /// Nullable:False
         /// </summary>
@@ -53,7 +53,7 @@ namespace DataStatistics.Model.mj_log_other
 
 
         /// <summary>
-        /// Desc:
+        /// Desc:版本
         /// Default:
         /// Nullable:False
         /// </summary>
@@ -62,7 +62,7 @@ namespace DataStatistics.Model.mj_log_other
 
 
         /// <summary>
-        /// Desc:
+        /// Desc:数据
         /// Default:
         /// Nullable:False
         /// </summary>
