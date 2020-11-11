@@ -7,6 +7,10 @@ namespace DataStatistics.Model.ViewModel
 {
     public class DaysDataModel
     {
+        ///// <summary>
+        ///// X轴坐标
+        ///// </summary>
+        //public List<int> xAxis { get; set; }
         /// <summary>
         /// 活跃
         /// </summary>

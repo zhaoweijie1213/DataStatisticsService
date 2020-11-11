@@ -85,5 +85,25 @@ namespace DataStatistics.Api.Controllers
                 return Json<DaysDataModel>(ResultCode.Error, null, "操作失败");
             }
         }
+        /// <summary>
+        /// 获取自定义参数
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <returns></returns>
+        [HttpGet("GetAreaParams")]
+        public ApiResult<AreaParamsModel> GetAreaParams(int areaid) 
+        {
+
+            try
+            {
+                var data = _service.GetAreaParams(areaid);
+                return Json(ResultCode.Success, data);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"GetResult:{e.Message}");
+                return Json<AreaParamsModel>(ResultCode.Error, null, "操作失败");
+            }
+        }
     }
 }

@@ -31,5 +31,11 @@ namespace DataStatistics.Service.Services
         /// <param name="value"></param>
         /// <returns></returns>
         DaysDataModel RealTimeData(int areaid, int type, int value);
+        /// <summary>
+        /// 获取自定义参数
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <returns></returns>
+        AreaParamsModel GetAreaParams(int areaid);
     }
 }

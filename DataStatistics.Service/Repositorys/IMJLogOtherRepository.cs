@@ -34,5 +34,11 @@ namespace DataStatistics.Service.Repositorys
         /// <param name="time"></param>
         /// <returns></returns>
         List<OverallSituationModel> GetThirtyDaysData(int areaid, DateTime time);
+        /// <summary>
+        /// 获取自定义参数
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <returns></returns>
+        AreaParamsModel GetAreaParams(int areaid);
     }
 }

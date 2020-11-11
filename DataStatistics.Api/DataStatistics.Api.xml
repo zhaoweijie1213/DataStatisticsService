@@ -74,5 +74,12 @@
             <param name="value"></param>
             <returns></returns>
         </member>
+        <member name="M:DataStatistics.Api.Controllers.DataStatisticsController.GetAreaParams(System.Int32)">
+            <summary>
+            获取自定义参数
+            </summary>
+            <param name="areaid"></param>
+            <returns></returns>
+        </member>
     </members>
 </doc>

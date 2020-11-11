@@ -4,6 +4,21 @@
         <name>DataStatistics.Model</name>
     </assembly>
     <members>
+        <member name="P:DataStatistics.Model.mj_log_other.AreaParamsModel.id">
+            <summary>
+            编号
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.AreaParamsModel.areaid">
+            <summary>
+            区域id
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.AreaParamsModel.configKeys">
+            <summary>
+            参数
+            </summary>
+        </member>
         <member name="T:DataStatistics.Model.mj_log_other.OverallSituationModel">
             <summary>
             总体情况

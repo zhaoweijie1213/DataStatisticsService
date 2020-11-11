@@ -150,14 +150,14 @@ namespace DataStatistics.Service.Services.Impl
                     //活跃用户
                     data.Active.All.Add(dataItem.Where(i => i.uid != 0).GroupBy(i => i.uid).Count());
                     data.Active.Android.Add(dataItem.Where(i => i.uid != 0&&i.platForm==   PlatFromEnum.Android.GetName()).GroupBy(i => i.uid).Count());
-                    data.Active.IOS.Add(dataItem.Where(i => i.uid != 0&&i.platForm== "IOS").GroupBy(i => i.uid).Count());
-                    data.Active.Windows.Add(dataItem.Where(i => i.uid != 0&&i.platForm== "Windows").GroupBy(i => i.uid).Count());
+                    data.Active.IOS.Add(dataItem.Where(i => i.uid != 0&&i.platForm== PlatFromEnum.IOS.GetName()).GroupBy(i => i.uid).Count());
+                    data.Active.Windows.Add(dataItem.Where(i => i.uid != 0&&i.platForm== PlatFromEnum.Windows.GetName()).GroupBy(i => i.uid).Count());
 
                     //注册用户
                     data.Register.All.Add(dataItem.Where(i => i.uid == 0).Count());
-                    data.Register.Android.Add(dataItem.Where(i => i.uid == 0&&i.platForm== "Android").Count());
-                    data.Register.IOS.Add(dataItem.Where(i => i.uid == 0 && i.platForm == "Android").Count());
-                    data.Register.Windows.Add(dataItem.Where(i => i.uid == 0 && i.platForm == "Android").Count());
+                    data.Register.Android.Add(dataItem.Where(i => i.uid == 0&&i.platForm== PlatFromEnum.Android.GetName()).Count());
+                    data.Register.IOS.Add(dataItem.Where(i => i.uid == 0 && i.platForm == PlatFromEnum.IOS.GetName()).Count());
+                    data.Register.Windows.Add(dataItem.Where(i => i.uid == 0 && i.platForm == PlatFromEnum.Windows.GetName()).Count());
                 }
             }
             catch (Exception e)
@@ -168,6 +168,9 @@ namespace DataStatistics.Service.Services.Impl
            
             return data;
         }
+
+
+
 
         /// <summary>
         /// 实时时间列表
@@ -224,6 +227,24 @@ namespace DataStatistics.Service.Services.Impl
             catch (Exception e)
             {
                 _logger.LogError($"GetRealTimeList{e.Message}");
+                throw;
+            }
+        }
+        /// <summary>
+        /// 获取自定义参数
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <returns></returns>
+        public AreaParamsModel GetAreaParams(int areaid) 
+        {
+            try
+            {
+                var res = _repository.GetAreaParams(areaid);
+                return res;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"GetAreaParams{e.Message}");
                 throw;
             }
         }

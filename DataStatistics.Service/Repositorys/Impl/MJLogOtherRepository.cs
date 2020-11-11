@@ -101,5 +101,25 @@ namespace DataStatistics.Service.Repositorys.Impl
                 throw;
             }
         }
+
+        /// <summary>
+        /// 获取自定义参数
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <returns></returns>
+        public AreaParamsModel GetAreaParams(int areaid)
+        {
+            try
+            {
+                string sql = $"select * from log_area_param where areaid={areaid}";
+                var res = _db.QueryFirst<AreaParamsModel>(sql);
+                return res;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"GetAreaParams:{e.Message}");
+                throw;
+            }
+        }
     }
 }

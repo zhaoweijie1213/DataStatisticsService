@@ -1,4 +1,5 @@
 ﻿using DataStatistics.Model.mj_log_other;
+using DataStatistics.Service.Enums;
 using DataStatistics.Service.Repositorys;
 using EasyCaching.Core;
 using Microsoft.Extensions.Logging;
@@ -53,7 +54,7 @@ namespace DataStatistics.Service.Quartz.Impl
                         areaid = Convert.ToInt32(key),
                         activeUsers = data.Where(i => i.uid != 0).Count(),
                         registeredUsers = data.Where(i => i.uid == 0).Count(),
-                        platForm = "All",
+                        platForm = PlatFromEnum.All.GetName(),
                         dataTime= startTime,
                     };
                     list.Add(all);
@@ -61,9 +62,9 @@ namespace DataStatistics.Service.Quartz.Impl
                     OverallSituationModel windows = new OverallSituationModel()
                     {
                         areaid = Convert.ToInt32(key),
-                        activeUsers = data.Where(i => i.uid != 0 && i.platForm == "Windows").Count(),
-                        registeredUsers = data.Where(i => i.uid == 0 && i.platForm == "Windows").Count(),
-                        platForm = "Windows",
+                        activeUsers = data.Where(i => i.uid != 0 && i.platForm == PlatFromEnum.Windows.GetName()).Count(),
+                        registeredUsers = data.Where(i => i.uid == 0 && i.platForm == PlatFromEnum.Windows.GetName()).Count(),
+                        platForm = PlatFromEnum.Windows.GetName(),
                         dataTime = startTime,
                     };
                     list.Add(windows);
@@ -71,9 +72,9 @@ namespace DataStatistics.Service.Quartz.Impl
                     OverallSituationModel ios = new OverallSituationModel()
                     {
                         areaid = Convert.ToInt32(key),
-                        activeUsers = data.Where(i => i.uid != 0 && i.platForm == "IOS").Count(),
-                        registeredUsers = data.Where(i => i.uid == 0 && i.platForm == "IOS").Count(),
-                        platForm = "IOS",
+                        activeUsers = data.Where(i => i.uid != 0 && i.platForm == PlatFromEnum.IOS.GetName()).Count(),
+                        registeredUsers = data.Where(i => i.uid == 0 && i.platForm == PlatFromEnum.IOS.GetName()).Count(),
+                        platForm = PlatFromEnum.IOS.GetName(),
                         dataTime = startTime,
                     };
                     list.Add(ios);
@@ -81,9 +82,9 @@ namespace DataStatistics.Service.Quartz.Impl
                     OverallSituationModel android = new OverallSituationModel()
                     {
                         areaid = Convert.ToInt32(key),
-                        activeUsers = data.Where(i => i.uid != 0 && i.platForm == "Android").Count(),
-                        registeredUsers = data.Where(i => i.uid == 0 && i.platForm == "Android").Count(),
-                        platForm = "Android",
+                        activeUsers = data.Where(i => i.uid != 0 && i.platForm == PlatFromEnum.Android.GetName()).Count(),
+                        registeredUsers = data.Where(i => i.uid == 0 && i.platForm == PlatFromEnum.Android.GetName()).Count(),
+                        platForm = PlatFromEnum.Android.GetName(),
                         dataTime = startTime,
                     };
                     list.Add(android);
