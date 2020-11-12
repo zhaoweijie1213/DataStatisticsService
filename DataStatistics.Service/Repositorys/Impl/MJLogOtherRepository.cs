@@ -121,5 +121,26 @@ namespace DataStatistics.Service.Repositorys.Impl
                 throw;
             }
         }
+
+        /// <summary>
+        /// user action查询
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public List<UserActionModel> GetActionData(int areaid,string condition)
+        {
+            try
+            {
+                string sql = $"select * from log_userAction where areaid={areaid}{condition}";
+                var res = _db.Query<UserActionModel>(sql).ToList();
+                return res;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"GetAreaParams:{e.Message}");
+                throw;
+            }
+        }
     }
 }

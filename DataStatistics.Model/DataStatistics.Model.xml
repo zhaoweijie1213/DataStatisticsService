@@ -124,6 +124,11 @@
             Nullable:False
             </summary>
         </member>
+        <member name="P:DataStatistics.Model.ViewModel.DaysDataModel.xAxis">
+            <summary>
+            X轴坐标
+            </summary>
+        </member>
         <member name="P:DataStatistics.Model.ViewModel.DaysDataModel.Active">
             <summary>
             活跃
@@ -132,6 +137,26 @@
         <member name="P:DataStatistics.Model.ViewModel.DaysDataModel.Register">
             <summary>
             注册
+            </summary>
+        </member>
+        <member name="T:DataStatistics.Model.ViewModel.SingleSceneModel">
+            <summary>
+            单场景
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.SingleSceneModel.xAxis">
+            <summary>
+            x坐标轴
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.SingleSceneModel.legendData">
+            <summary>
+            图例数据
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.SingleSceneModel.Data">
+            <summary>
+            数据
             </summary>
         </member>
     </members>

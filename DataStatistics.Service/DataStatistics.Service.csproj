@@ -18,8 +18,4 @@
     <ProjectReference Include="..\DataStatistics.Model\DataStatistics.Model.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\Common\" />
-  </ItemGroup>
-
 </Project>

@@ -37,5 +37,15 @@ namespace DataStatistics.Service.Services
         /// <param name="areaid"></param>
         /// <returns></returns>
         AreaParamsModel GetAreaParams(int areaid);
+        /// <summary>
+        /// 单场景分析
+        /// </summary>
+        /// <param name="areaid">区域id</param>
+        /// <param name="days">天数</param>
+        /// <param name="platFrom">平台</param>
+        /// <param name="otherParam">其它参数</param>
+        /// <param name="dateRange">日期范围</param>
+        /// <returns></returns>
+        SingleSceneModel GetSingleSceneData(int areaid, int days, string platFrom, string otherParam, string dateRange);
     }
 }

@@ -3,6 +3,7 @@ using DataStatistics.Model.mj_log_other;
 using DataStatistics.Model.ViewModel;
 using DataStatistics.Service.Enums;
 using DataStatistics.Service.Repositorys;
+using DataStatistics.Service.Services.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic.CompilerServices;
 using System;
@@ -101,6 +102,8 @@ namespace DataStatistics.Service.Services.Impl
                         model.Register.Windows.Add(0);
                     }
                 }
+                //近30天数据
+                model.xAxis = xAxisTools.DataRange(30);
                 return model;
             }
             catch (Exception e)
@@ -125,6 +128,7 @@ namespace DataStatistics.Service.Services.Impl
                 var startTime = DateTime.Now.Date;
                 var endTime = DateTime.Now;
                 var realTimeList = GetRealTimeList(startTime,endTime,type,value);
+                data.xAxis = realTimeList;
                 #region 向redis添加测试数据
                 //var todayData = _repository._db.Query<UserActionModel>($"select * from log_userAction where date between '{startTime}' and '{endTime}' ").ToList();
                 //foreach (var item in todayData)
@@ -135,7 +139,7 @@ namespace DataStatistics.Service.Services.Impl
                 //}
                 #endregion
                 //获取缓存实时数据
-                var list = _cache.GetAllList<UserActionModel>("800");
+                var list = _cache.GetAllList<UserActionModel>(areaid.ToString());
                 //初始化
                 List<int> all = new List<int>();
                 List<int> android = new List<int>();
@@ -143,7 +147,15 @@ namespace DataStatistics.Service.Services.Impl
                 List<int> windows = new List<int>();
                 for (int i = 0; i < realTimeList.Count; i++)
                 {
-                    var st = Convert.ToDateTime(startTime.ToString($"yyyy-MM-dd {realTimeList[i]}"));
+                    DateTime st;
+                    if (i==0)
+                    {
+                        st = Convert.ToDateTime(startTime.ToString($"yyyy-MM-dd {realTimeList[i]}"));
+                    }
+                    else
+                    {
+                        st = Convert.ToDateTime(startTime.ToString($"yyyy-MM-dd {realTimeList[i - 1]}"));
+                    }
                     var et = Convert.ToDateTime(startTime.ToString($"yyyy-MM-dd {realTimeList[i]}"));
                     //时间段内数据
                     var dataItem = list.Where(i => i.date >= st && i.date < et);
@@ -173,9 +185,9 @@ namespace DataStatistics.Service.Services.Impl
 
 
         /// <summary>
-        /// 实时时间列表
+        /// 实时时间x轴坐标列表
         /// </summary>
-        /// <param name="type"></param>
+        /// <param name="type">0秒,1分,2时</param>
         /// <param name="value"></param>
         /// <returns></returns>
         public List<string> GetRealTimeList(DateTime startTime,DateTime endTime,int type, int value)
@@ -244,9 +256,72 @@ namespace DataStatistics.Service.Services.Impl
             }
             catch (Exception e)
             {
-                _logger.LogError($"GetAreaParams{e.Message}");
+                _logger.LogError($"GetAreaParams:{e.Message}");
                 throw;
             }
+        }
+
+        /// <summary>
+        /// 单场景分析
+        /// </summary>
+        /// <param name="areaid">区域id</param>
+        /// <param name="days">天数</param>
+        /// <param name="platFrom">平台</param>
+        /// <param name="otherParam">其它参数</param>
+        /// <param name="dateRange">日期范围</param>
+        /// <returns></returns>
+        public SingleSceneModel GetSingleSceneData(int areaid,int days,string platFrom,string otherParam,string dateRange)
+        {
+            try
+            {
+                SingleSceneModel data = new SingleSceneModel();
+                string contition = $" and platForm='{platFrom}' ";
+                List<string> legendData = new List<string>();
+                if (platFrom== PlatFromEnum.All.GetName())
+                {
+                    contition = "";
+                    legendData.Add(PlatFromEnum.All.GetName());
+                }
+                if (!string.IsNullOrEmpty(otherParam))
+                {
+                    legendData.Add(otherParam);
+                }
+                //近*天
+                if (days!=0)
+                {
+                    data.xAxis = xAxisTools.DataRange(days);
+                    var start = DateTime.Now.AddDays(-days);
+                    var end = DateTime.Now;
+                    contition += $"and date between '{start}' and '{end}' ";
+                    var unitData = _repository.GetActionData(areaid, contition);
+                    
+                }
+                //日期范围
+                if (!string.IsNullOrEmpty(dateRange))
+                {
+                    var datelist=dateRange.Split('至');
+                    var start = Convert.ToDateTime(datelist[0].Trim());
+                    var end = Convert.ToDateTime(datelist[1].Trim());
+                    data.xAxis = xAxisTools.DataRange(start,end);
+                }
+
+            
+                return data;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"SingleScene:{e.Message}");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 漏斗图数据
+        /// </summary>
+        /// <returns></returns>
+        public string GetFunnelData(int areaid)
+        {
+            return "";
         }
     }
 }

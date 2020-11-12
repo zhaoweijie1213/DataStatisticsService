@@ -105,5 +105,28 @@ namespace DataStatistics.Api.Controllers
                 return Json<AreaParamsModel>(ResultCode.Error, null, "操作失败");
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="areaid">区域id</param>
+        /// <param name="days">天数</param>
+        /// <param name="platFrom">平台</param>
+        /// <param name="otherParam">其它参数</param>
+        /// <param name="dateRange">日期范围</param>
+        /// <returns></returns>
+        [HttpGet("GetSingleSceneData")]
+        public ApiResult<SingleSceneModel> GetSingleSceneData(int areaid, int days, string platFrom, string otherParam, string dateRange)
+        {
+            try
+            {
+                var data = _service.GetSingleSceneData(areaid, days, platFrom, otherParam, dateRange);
+                return Json(ResultCode.Success, data);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"GetResult:{e.Message}");
+                return Json<SingleSceneModel>(ResultCode.Error, null, "操作失败");
+            }
+        }
     }
 }

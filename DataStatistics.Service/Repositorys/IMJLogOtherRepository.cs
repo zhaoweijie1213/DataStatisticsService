@@ -40,5 +40,12 @@ namespace DataStatistics.Service.Repositorys
         /// <param name="areaid"></param>
         /// <returns></returns>
         AreaParamsModel GetAreaParams(int areaid);
+        /// <summary>
+        /// user action查询
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        List<UserActionModel> GetActionData(int areaid, string condition);
     }
 }

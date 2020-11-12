@@ -17,6 +17,20 @@ namespace DataStatistics.Service.Enums
     }
 
     /// <summary>
+    /// 用户状态
+    /// </summary>
+    public enum UserState
+    {
+        /// <summary>
+        /// 未注册
+        /// </summary>
+        Register,
+        /// <summary>
+        /// 活跃
+        /// </summary>
+        Active
+    }
+    /// <summary>
     /// 枚举扩展方法
     /// </summary>
     public static class PlatFromEnumExt
