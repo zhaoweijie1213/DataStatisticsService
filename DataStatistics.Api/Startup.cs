@@ -89,10 +89,37 @@ namespace DataStatistics.Api
                 c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFile));
                 c.IncludeXmlComments(Path.Combine(baseDirectory, "DataStatistics.Model.xml"));
             });
+            services.AddCap(options=> {
+                options.UseMySql(Configuration.GetConnectionString("dotnet_cap_mysql"));
+                options.UseRabbitMQ(config=> {
+                    config.HostName = "";
+                    config.UserName = "";
+                    config.Port = 5072;
+                    config.Password = "";
+                    config.ExchangeName = "";
+                });
+
+
+                options.DefaultGroup = "";
+
+
+                options.UseDashboard();
+
+                //失败后的重试次数，默认50次；在FailedRetryInterval默认60秒的情况下，即默认重试50*60秒(50分钟)之后放弃失败重试
+                //x.FailedRetryCount = 10;
+
+                //失败后的重拾间隔，默认60秒
+                //x.FailedRetryInterval = 30;
+
+                //设置成功信息的删除时间默认24*3600秒
+                //x.SucceedMessageExpiredAfter = 60 * 60;
+
+            });
             services.AddMvc(options=> {
                 options.Filters.Add<ApiResultFilter>();
             });
             services.AddControllers();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
