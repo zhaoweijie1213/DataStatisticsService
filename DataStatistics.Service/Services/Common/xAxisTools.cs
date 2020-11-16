@@ -15,9 +15,9 @@ namespace DataStatistics.Service.Services.Common
         {
             List<string> dateList = new List<string>();
             DateTime times = DateTime.Now.Date.AddDays(-days);
-            for (int i = 0; i < days; i++)
+            for (int i = 0; i <= days; i++)
             {
-                dateList.Add(times.AddDays(i).ToString("MM-dd"));
+                dateList.Add(times.AddDays(i).ToString("yyyy-MM-dd"));
             }
             return dateList;
         }
@@ -32,9 +32,9 @@ namespace DataStatistics.Service.Services.Common
         {
             List<string> dateList = new List<string>();
             TimeSpan times = end - start;
-            for (int i = 0; i < times.TotalDays; i++)
+            for (int i = 0; i <= times.TotalDays; i++)
             {
-                dateList.Add(start.AddDays(i).ToString("MM-dd"));
+                dateList.Add(start.AddDays(i).ToString("yyyy-MM-dd"));
             }
             return dateList;
         }

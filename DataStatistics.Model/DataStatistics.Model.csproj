@@ -8,4 +8,10 @@
     <DocumentationFile>DataStatistics.Model.xml</DocumentationFile>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Update="DataStatistics.Model.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

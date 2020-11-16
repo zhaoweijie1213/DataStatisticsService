@@ -106,7 +106,28 @@ namespace DataStatistics.Api.Controllers
             }
         }
         /// <summary>
-        /// 
+        /// 用户画像
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
+        [HttpGet("GetUserPic")]
+        public ApiResult<UserPicModel> GetUserPic(int areaid,DateTime start,DateTime end)
+        {
+            try
+            {
+                var data = _service.GetUserPic(areaid, start, end);
+                return Json(ResultCode.Success, data);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"GetResult:{e.Message}");
+                return Json<UserPicModel>(ResultCode.Error, null, "操作失败");
+            }
+        }
+        /// <summary>
+        /// 单场景分析
         /// </summary>
         /// <param name="areaid">区域id</param>
         /// <param name="days">天数</param>

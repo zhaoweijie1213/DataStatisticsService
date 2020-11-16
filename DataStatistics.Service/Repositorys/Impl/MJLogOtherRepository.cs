@@ -112,7 +112,7 @@ namespace DataStatistics.Service.Repositorys.Impl
             try
             {
                 string sql = $"select * from log_area_param where areaid={areaid}";
-                var res = _db.QueryFirst<AreaParamsModel>(sql);
+                var res = _db.QueryFirstOrDefault<AreaParamsModel>(sql);
                 return res;
             }
             catch (Exception e)
@@ -132,7 +132,7 @@ namespace DataStatistics.Service.Repositorys.Impl
         {
             try
             {
-                string sql = $"select * from log_userAction where areaid={areaid}{condition}";
+                string sql = $"select * from log_userAction where areaid={areaid} {condition}";
                 var res = _db.Query<UserActionModel>(sql).ToList();
                 return res;
             }

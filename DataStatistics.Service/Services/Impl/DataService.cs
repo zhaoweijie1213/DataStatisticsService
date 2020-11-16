@@ -135,7 +135,7 @@ namespace DataStatistics.Service.Services.Impl
                 //{
                 //    //var s = _cache._redisProvider.SMembers<UserActionModel>(item.areaid.ToString());
                 //    //向list添加元素
-                //    _cache._redisProvider.RPushX<UserActionModel>(item.areaid.ToString(),item);
+                //    _cache._redisProvider.RPushX<UserActionModel>(item.areaid.ToString(), item);
                 //}
                 #endregion
                 //获取缓存实时数据
@@ -252,6 +252,10 @@ namespace DataStatistics.Service.Services.Impl
             try
             {
                 var res = _repository.GetAreaParams(areaid);
+                if (res == null)
+                {
+                    res = new AreaParamsModel();
+                }
                 return res;
             }
             catch (Exception e)
@@ -275,6 +279,7 @@ namespace DataStatistics.Service.Services.Impl
             try
             {
                 SingleSceneModel data = new SingleSceneModel();
+                List<string> datelist = new List<string>();
                 string contition = $" and platForm='{platFrom}' ";
                 List<string> legendData = new List<string>();
                 if (platFrom== PlatFromEnum.All.GetName())
@@ -289,22 +294,88 @@ namespace DataStatistics.Service.Services.Impl
                 //近*天
                 if (days!=0)
                 {
-                    data.xAxis = xAxisTools.DataRange(days);
+                    //data.xAxis = xAxisTools.DataRange(days);
                     var start = DateTime.Now.AddDays(-days);
                     var end = DateTime.Now;
+                    //data.xAxis = xAxisTools.DataRange(days);
+                    datelist = xAxisTools.DataRange(days);
                     contition += $"and date between '{start}' and '{end}' ";
+                    //数据
                     var unitData = _repository.GetActionData(areaid, contition);
-                    
+                    //活跃
+                    List<int> actv = new List<int>();
+                    //注册
+                    List<int> regst = new List<int>();
+                    for (int i = 0; i < datelist.Count-1; i++)
+                    {
+                        var x = datelist[i];
+                        DateTime st = Convert.ToDateTime(x);
+                        data.xAxis.Add(x);
+                        var et = Convert.ToDateTime(datelist[i + 1]);
+                        var acount = unitData.Where(i => i.uid!=0&& i.date>=st&&i.date<et).GroupBy(i=>i.uid).Count();
+                        var rcount = unitData.Where(i => i.uid==0&& i.date>=st&&i.date<et).Count();
+                        actv.Add(acount);
+                        regst.Add(rcount);
+                    }
+                    data.ActiveData.Add(actv);
+                    data.RegisterData.Add(regst);
+                    data.legendData.Add(platFrom);
                 }
                 //日期范围
                 if (!string.IsNullOrEmpty(dateRange))
                 {
-                    var datelist=dateRange.Split('至');
-                    var start = Convert.ToDateTime(datelist[0].Trim());
-                    var end = Convert.ToDateTime(datelist[1].Trim());
-                    data.xAxis = xAxisTools.DataRange(start,end);
-                }
+                    var daterange=dateRange.Split('至');
+                    var start = Convert.ToDateTime(daterange[0].Trim());
+                    var end = Convert.ToDateTime(daterange[1].Trim());
+                    contition += $"and date between '{start}' and '{end}' ";
+                    //data.xAxis = xAxisTools.DataRange(start,end);
+                    //数据
+                    var unitData = _repository.GetActionData(areaid, contition);
+                    datelist = xAxisTools.DataRange(start,end);
+                    List<int> actv = new List<int>();
+                    //注册
+                    List<int> regst = new List<int>();
 
+                    for (int i = 0; i < datelist.Count-1; i++)
+                    {
+                        var x = datelist[i];
+                        DateTime st = Convert.ToDateTime(x);
+                        data.xAxis.Add(x);
+                        var et = Convert.ToDateTime(datelist[i + 1]);
+                        var acount = unitData.Where(i => i.uid!=0&& i.date >= st && i.date < et).GroupBy(i=>i.uid).Count();
+                        var rcount = unitData.Where(i => i.uid == 0 && i.date >= st && i.date < et).Count();
+                        actv.Add(acount);
+                        regst.Add(rcount);
+                    }
+                    data.ActiveData.Add(actv);
+                    data.RegisterData.Add(regst);
+                    data.legendData.Add(platFrom);
+                }
+                if (!string.IsNullOrEmpty(otherParam))
+                {
+                    data.legendData.Add(otherParam);
+                    //数据
+                    var unitData = _repository.GetActionData(areaid, contition);
+                    datelist = xAxisTools.DataRange(days);
+                    List<int> actv = new List<int>();
+                    //注册
+                    List<int> regst = new List<int>();
+
+                    for (int i = 0; i < datelist.Count-1; i++)
+                    {
+                        var x = datelist[i];
+                        DateTime st = Convert.ToDateTime(x);
+                        //data.xAxis.Add(x);
+                        var et = Convert.ToDateTime(datelist[i + 1]);
+                        var acount = unitData.Where(i => i.uid != 0 && i.date >= st && i.date < et && i.data.Contains(otherParam)).GroupBy(i => i.uid).Count();
+                        var rcount = unitData.Where(i => i.uid == 0 && i.date >= st && i.date < et && i.data.Contains(otherParam)).Count();
+                        actv.Add(acount);
+                        regst.Add(rcount);
+                    }
+                    data.ActiveData.Add(actv);
+                    data.RegisterData.Add(regst);
+                    data.legendData.Add(platFrom);
+                }
             
                 return data;
             }
@@ -315,6 +386,52 @@ namespace DataStatistics.Service.Services.Impl
             }
         }
 
+        /// <summary>
+        /// 用户画像
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <param name="strat"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
+        public UserPicModel GetUserPic(int areaid,DateTime start, DateTime end)
+        {
+            try
+            {
+                UserPicModel res = new UserPicModel();
+                string contition = $" and date between '{start}' and '{end}'";
+                //数据
+                var unitData = _repository.GetActionData(areaid, contition);
+                Dictionary<int, string> plats=new Dictionary<int, string>();
+                PlatFromEnumExt.GetEnumAllNameAndValue<PlatFromEnum>(ref plats);
+                foreach (var item in plats)
+                {
+                    string plat = item.Value;
+                    if (plat != "All")
+                    {
+                        res.legendData.Add(plat);
+                        seriesData aseries = new seriesData
+                        {
+                            name = plat,
+                            value = unitData.Where(i => i.platForm == plat && i.uid != 0).GroupBy(i=>i.uid).Count()
+                        };
+                        seriesData rseries = new seriesData
+                        {
+                            name = plat,
+                            value = unitData.Where(i => i.platForm == plat && i.uid == 0).Count()
+                        };
+                        res.ActiveData.Add(aseries);
+                        res.RegisterData.Add(rseries);
+                    }
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"GetUserPic:{e.Message}");
+                throw;
+            }
+
+        }
         /// <summary>
         /// 漏斗图数据
         /// </summary>

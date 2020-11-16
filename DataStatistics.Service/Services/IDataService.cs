@@ -47,5 +47,13 @@ namespace DataStatistics.Service.Services
         /// <param name="dateRange">日期范围</param>
         /// <returns></returns>
         SingleSceneModel GetSingleSceneData(int areaid, int days, string platFrom, string otherParam, string dateRange);
+        /// <summary>
+        /// 用户画像
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <param name="strat"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
+        UserPicModel GetUserPic(int areaid, DateTime start, DateTime end);
     }
 }

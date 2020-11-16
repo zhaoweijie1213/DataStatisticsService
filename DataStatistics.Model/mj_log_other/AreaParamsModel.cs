@@ -8,6 +8,10 @@ namespace DataStatistics.Model.mj_log_other
     [Table("log_area_param")]
     public class AreaParamsModel
     {
+        public AreaParamsModel()
+        {
+            this.configKeys ="";
+        }
         /// <summary>
         /// 编号
         /// </summary>

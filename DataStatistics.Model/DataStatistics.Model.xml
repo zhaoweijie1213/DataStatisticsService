@@ -139,6 +139,16 @@
             注册
             </summary>
         </member>
+        <member name="P:DataStatistics.Model.ViewModel.FunnelDataModel.lengdData">
+            <summary>
+            图例数据
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.FunnelDataModel.seriesData">
+            <summary>
+            数据
+            </summary>
+        </member>
         <member name="T:DataStatistics.Model.ViewModel.SingleSceneModel">
             <summary>
             单场景
@@ -154,7 +164,27 @@
             图例数据
             </summary>
         </member>
-        <member name="P:DataStatistics.Model.ViewModel.SingleSceneModel.Data">
+        <member name="P:DataStatistics.Model.ViewModel.SingleSceneModel.ActiveData">
+            <summary>
+            活跃数据
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.SingleSceneModel.RegisterData">
+            <summary>
+            注册数据
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.UserPicModel.legendData">
+            <summary>
+            图例
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.UserPicModel.ActiveData">
+            <summary>
+            数据
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.UserPicModel.RegisterData">
             <summary>
             数据
             </summary>
