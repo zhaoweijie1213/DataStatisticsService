@@ -6,9 +6,13 @@ using System.Threading.Tasks;
 using DataStatistics.Api.Controllers;
 using DataStatistics.Service.Quartz;
 using DataStatistics.Service.Quartz.Impl;
+using DataStatistics.Service.Quartz.Jobs;
+using DataStatistics.Service.Quartz.Jobs.Interface;
 using DataStatistics.Service.Repositorys;
 using DataStatistics.Service.Repositorys.Impl;
 using DataStatistics.Service.Services;
+using DataStatistics.Service.Services.DataProcessing;
+using DataStatistics.Service.Services.DataProcessingl.Impl;
 using DataStatistics.Service.Services.Impl;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -39,17 +43,25 @@ namespace DataStatistics.Api
             {
                 option.UseRedis(Configuration, "userAction", "easycaching:redis").WithJson();
             });
-            services.AddTransient<Quartz.IJob, DbStatisticsJob>();
+            //services.AddTransient<Quartz.IJob, DbStatisticsJob>();       
+            //添加jobs
+            services.AddTransient<IDbStatisticsJob, DbStatisticsJob>();
+            services.AddTransient<IDataGroupBy1MinJob, DataGroupBy1MinJob>();
+            services.AddTransient<IDataGroupBy5MinJob, DataGroupBy5MinJob>();
+            services.AddTransient<IDataGroupBy10MinJob, DataGroupBy10MinJob>();
+            services.AddTransient<IDataGroupBy1HourJob, DataGroupBy1HourJob>();
+            services.AddTransient<IRidesDataJob, RidesDataJob>();
+            //
             services.AddScoped<ICacheManage, CacheManage>();
             services.AddScoped<IDataService, DataService>();
             //调度器
-
             services.AddSingleton<IQuartzManager, QuartzManager>();
             services.AddSingleton<IMJLogOtherRepository>(option =>
             {
                 var log = option.GetServices<ILogger<MJLogOtherRepository>>();
                 return new MJLogOtherRepository(log.FirstOrDefault(), Configuration.GetConnectionString("mj_log_other_mysql"));
             });
+            services.AddScoped<IDataProcessing, DataProcessing>();
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
@@ -89,32 +101,35 @@ namespace DataStatistics.Api
                 c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFile));
                 c.IncludeXmlComments(Path.Combine(baseDirectory, "DataStatistics.Model.xml"));
             });
-            services.AddCap(options=> {
-                options.UseMySql(Configuration.GetConnectionString("dotnet_cap_mysql"));
-                options.UseRabbitMQ(config=> {
-                    config.HostName = "";
-                    config.UserName = "";
-                    config.Port = 5072;
-                    config.Password = "";
-                    config.ExchangeName = "";
-                });
+            //cap
+            //services.AddCap(options =>
+            //{
+            //    options.UseMySql(Configuration.GetConnectionString("dotnet_cap_mysql"));
+            //    options.UseRabbitMQ(config =>
+            //    {
+            //        config.HostName = "";
+            //        config.UserName = "";
+            //        config.Port = 5072;
+            //        config.Password = "";
+            //        config.ExchangeName = "";
+            //    });
 
 
-                options.DefaultGroup = "";
+            //    options.DefaultGroup = "";
 
 
-                options.UseDashboard();
+            //    options.UseDashboard();
 
-                //失败后的重试次数，默认50次；在FailedRetryInterval默认60秒的情况下，即默认重试50*60秒(50分钟)之后放弃失败重试
-                //x.FailedRetryCount = 10;
+            //    //失败后的重试次数，默认50次；在FailedRetryInterval默认60秒的情况下，即默认重试50*60秒(50分钟)之后放弃失败重试
+            //    options.FailedRetryCount = 10;
 
-                //失败后的重拾间隔，默认60秒
-                //x.FailedRetryInterval = 30;
+            //    //失败后的重拾间隔，默认60秒
+            //    options.FailedRetryInterval = 30;
 
-                //设置成功信息的删除时间默认24*3600秒
-                //x.SucceedMessageExpiredAfter = 60 * 60;
+            //    //设置成功信息的删除时间默认24*3600秒
+            //    options.SucceedMessageExpiredAfter = 60 * 60;
 
-            });
+            //});
             services.AddMvc(options=> {
                 options.Filters.Add<ApiResultFilter>();
             });

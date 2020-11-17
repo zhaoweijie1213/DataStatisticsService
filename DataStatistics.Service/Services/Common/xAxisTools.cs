@@ -10,15 +10,29 @@ namespace DataStatistics.Service.Services.Common
         /// 获取近几天数据
         /// </summary>
         /// <param name="days"></param>
+        /// <param name="hasYear">显示年份</param>
         /// <returns></returns>
-        public static List<string> DataRange(int days)
+        public static List<string> DataRange(int days,bool hasYear=false)
         {
             List<string> dateList = new List<string>();
-            DateTime times = DateTime.Now.Date.AddDays(-days);
-            for (int i = 0; i <= days; i++)
+            if (hasYear)
             {
-                dateList.Add(times.AddDays(i).ToString("yyyy-MM-dd"));
+               
+                DateTime times = DateTime.Now.Date.AddDays(-days);
+                for (int i = 0; i < days; i++)
+                {
+                    dateList.Add(times.AddDays(i).ToString("MM-dd"));
+                }
             }
+            else
+            {
+                DateTime times = DateTime.Now.Date.AddDays(-days);
+                for (int i = 0; i <= days; i++)
+                {
+                    dateList.Add(times.AddDays(i).ToString("yyyy-MM-dd"));
+                }
+            }
+
             return dateList;
         }
 
@@ -27,14 +41,25 @@ namespace DataStatistics.Service.Services.Common
         /// </summary>
         /// <param name="start"></param>
         /// <param name="end"></param>
+        /// <param name="hasYear">显示年份</param>
         /// <returns></returns>
-        public static List<string> DataRange(DateTime start,DateTime end)
+        public static List<string> DataRange(DateTime start,DateTime end,bool hasYear=false)
         {
             List<string> dateList = new List<string>();
             TimeSpan times = end - start;
-            for (int i = 0; i <= times.TotalDays; i++)
+            if (hasYear)
             {
-                dateList.Add(start.AddDays(i).ToString("yyyy-MM-dd"));
+                for (int i = 0; i < times.TotalDays; i++)
+                {
+                    dateList.Add(start.AddDays(i).ToString("MM-dd"));
+                }
+            }
+            else
+            {
+                for (int i = 0; i <= times.TotalDays; i++)
+                {
+                    dateList.Add(start.AddDays(i).ToString("yyyy-MM-dd"));
+                }
             }
             return dateList;
         }

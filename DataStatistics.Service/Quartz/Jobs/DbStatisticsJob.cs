@@ -1,5 +1,6 @@
 ﻿using DataStatistics.Model.mj_log_other;
 using DataStatistics.Service.Enums;
+using DataStatistics.Service.Quartz.Jobs.Interface;
 using DataStatistics.Service.Repositorys;
 using EasyCaching.Core;
 using Microsoft.Extensions.Logging;
@@ -16,7 +17,7 @@ namespace DataStatistics.Service.Quartz.Impl
     /// <summary>
     /// 数据处理任务
     /// </summary>
-    public class DbStatisticsJob : IJob
+    public class DbStatisticsJob : IDbStatisticsJob
     {
         /// <summary>
         /// 日志
@@ -47,7 +48,8 @@ namespace DataStatistics.Service.Quartz.Impl
                 List<string> keys = redisProvider.SearchKeys("*",0);
                 foreach (var key in keys)
                 {
-                    var data = redisProvider.SMembers<UserActionModel>(key);
+                    var length = redisProvider.LLen(key);
+                    var data = redisProvider.LRange<UserActionModel>(key, 0, length).Where(i => i.date >= startTime && i.date < endtTime).ToList();
                     List<OverallSituationModel> list = new List<OverallSituationModel>();
                     //all
                     OverallSituationModel all = new OverallSituationModel() {

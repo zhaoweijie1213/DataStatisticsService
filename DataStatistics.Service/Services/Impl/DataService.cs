@@ -103,7 +103,7 @@ namespace DataStatistics.Service.Services.Impl
                     }
                 }
                 //近30天数据
-                model.xAxis = xAxisTools.DataRange(30);
+                model.xAxis = xAxisTools.DataRange(30,true);
                 return model;
             }
             catch (Exception e)
@@ -125,19 +125,10 @@ namespace DataStatistics.Service.Services.Impl
             DaysDataModel data = new DaysDataModel();
             try
             {
-                var startTime = DateTime.Now.Date;
+                var startTime = DateTime.Now.AddHours(-24);
                 var endTime = DateTime.Now;
                 var realTimeList = GetRealTimeList(startTime,endTime,type,value);
                 data.xAxis = realTimeList;
-                #region 向redis添加测试数据
-                //var todayData = _repository._db.Query<UserActionModel>($"select * from log_userAction where date between '{startTime}' and '{endTime}' ").ToList();
-                //foreach (var item in todayData)
-                //{
-                //    //var s = _cache._redisProvider.SMembers<UserActionModel>(item.areaid.ToString());
-                //    //向list添加元素
-                //    _cache._redisProvider.RPushX<UserActionModel>(item.areaid.ToString(), item);
-                //}
-                #endregion
                 //获取缓存实时数据
                 var list = _cache.GetAllList<UserActionModel>(areaid.ToString());
                 //初始化
@@ -296,6 +287,7 @@ namespace DataStatistics.Service.Services.Impl
                 {
                     //data.xAxis = xAxisTools.DataRange(days);
                     var start = DateTime.Now.AddDays(-days);
+                    data.xAxis = xAxisTools.DataRange(days,true);
                     var end = DateTime.Now;
                     //data.xAxis = xAxisTools.DataRange(days);
                     datelist = xAxisTools.DataRange(days);
@@ -310,7 +302,7 @@ namespace DataStatistics.Service.Services.Impl
                     {
                         var x = datelist[i];
                         DateTime st = Convert.ToDateTime(x);
-                        data.xAxis.Add(x);
+                        //data.xAxis.Add(x);
                         var et = Convert.ToDateTime(datelist[i + 1]);
                         var acount = unitData.Where(i => i.uid!=0&& i.date>=st&&i.date<et).GroupBy(i=>i.uid).Count();
                         var rcount = unitData.Where(i => i.uid==0&& i.date>=st&&i.date<et).Count();
@@ -332,6 +324,7 @@ namespace DataStatistics.Service.Services.Impl
                     //数据
                     var unitData = _repository.GetActionData(areaid, contition);
                     datelist = xAxisTools.DataRange(start,end);
+                    data.xAxis = xAxisTools.DataRange(start, end, true);
                     List<int> actv = new List<int>();
                     //注册
                     List<int> regst = new List<int>();
@@ -340,7 +333,7 @@ namespace DataStatistics.Service.Services.Impl
                     {
                         var x = datelist[i];
                         DateTime st = Convert.ToDateTime(x);
-                        data.xAxis.Add(x);
+                        //data.xAxis.Add(x);
                         var et = Convert.ToDateTime(datelist[i + 1]);
                         var acount = unitData.Where(i => i.uid!=0&& i.date >= st && i.date < et).GroupBy(i=>i.uid).Count();
                         var rcount = unitData.Where(i => i.uid == 0 && i.date >= st && i.date < et).Count();
@@ -356,7 +349,6 @@ namespace DataStatistics.Service.Services.Impl
                     data.legendData.Add(otherParam);
                     //数据
                     var unitData = _repository.GetActionData(areaid, contition);
-                    datelist = xAxisTools.DataRange(days);
                     List<int> actv = new List<int>();
                     //注册
                     List<int> regst = new List<int>();
@@ -374,7 +366,7 @@ namespace DataStatistics.Service.Services.Impl
                     }
                     data.ActiveData.Add(actv);
                     data.RegisterData.Add(regst);
-                    data.legendData.Add(platFrom);
+                    //data.legendData.Add(platFrom);
                 }
             
                 return data;

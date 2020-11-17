@@ -51,7 +51,8 @@ namespace DataStatistics.Service.Repositorys.Impl
             try
             {
                 //string sql = $"select * from log_overall_situation where areaid={areaid} and dataTime='{DateTime.Now.Date.AddDays(-1)}'";
-                string sql = $"select * from log_overall_situation where areaid={areaid} and dataTime='2020-11-05 00:00:00'";
+                var time = DateTime.Now.AddDays(-1).Date;
+                string sql = $"select * from log_overall_situation where areaid={areaid} and dataTime='{time}'";
                 var res = _db.Query<OverallSituationModel>(sql).ToList();
                 return res;
             }
