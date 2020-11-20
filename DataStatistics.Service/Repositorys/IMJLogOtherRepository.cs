@@ -12,7 +12,7 @@ namespace DataStatistics.Service.Repositorys
         /// 获取元数据
         /// </summary>
         /// <returns></returns>
-        List<UserActionModel> GetUserActions();
+        List<UserActionModel> GetUserActions(DateTime start, DateTime end);
         /// <summary>
         /// 新增数据
         /// </summary>
@@ -47,5 +47,12 @@ namespace DataStatistics.Service.Repositorys
         /// <param name="condition"></param>
         /// <returns></returns>
         List<UserActionModel> GetActionData(int areaid, string condition);
+        /// <summary>
+        /// 修改大厅参数
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        bool UpdateAreaParams(AreaParamsModel list);
     }
 }

@@ -41,23 +41,25 @@ namespace DataStatistics.Service.Quartz.Impl
         {
             try
             {
-                DateTime startTime = DateTime.Now.Date.AddDays(-1);
                 DateTime endtTime = DateTime.Now.Date;
+                DateTime startTime = DateTime.Now.Date.AddDays(-1);
                 var redisProvider = _providerFactory.GetRedisProvider("userAction");
+                #region 昨日概况总结
                 //获取所有的key
-                List<string> keys = redisProvider.SearchKeys("*",0);
+                List<string> keys = redisProvider.SearchKeys("*", 0);
                 foreach (var key in keys)
                 {
                     var length = redisProvider.LLen(key);
                     var data = redisProvider.LRange<UserActionModel>(key, 0, length).Where(i => i.date >= startTime && i.date < endtTime).ToList();
                     List<OverallSituationModel> list = new List<OverallSituationModel>();
                     //all
-                    OverallSituationModel all = new OverallSituationModel() {
+                    OverallSituationModel all = new OverallSituationModel()
+                    {
                         areaid = Convert.ToInt32(key),
                         activeUsers = data.Where(i => i.uid != 0).Count(),
                         registeredUsers = data.Where(i => i.uid == 0).Count(),
                         platForm = PlatFromEnum.All.GetName(),
-                        dataTime= startTime,
+                        dataTime = startTime,
                     };
                     list.Add(all);
                     //windows
@@ -92,9 +94,9 @@ namespace DataStatistics.Service.Quartz.Impl
                     list.Add(android);
                     var res = _repository.Insert(list);
                     _logger.LogInformation($"更新:{res}条数据,时间:{DateTime.Now:yyyy-MMM-dd HH:mm:ss:ffff}");
-                    //删除redis缓存
-                    redisProvider.SRem<UserActionModel>(key);
                 }
+                #endregion
+
             }
             catch (Exception e)
             {

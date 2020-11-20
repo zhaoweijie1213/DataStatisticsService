@@ -149,5 +149,30 @@ namespace DataStatistics.Api.Controllers
                 return Json<SingleSceneModel>(ResultCode.Error, null, "操作失败");
             }
         }
+        /// <summary>
+        /// 漏斗图
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <param name="platForm"></param>
+        /// <param name="days"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="other"></param>
+        /// <param name="otherValue"></param>
+        /// <returns></returns>
+        [HttpGet("GetFunnelData")]
+        public ApiResult<FunnelDataModel> GetFunnelData(int areaid, string platForm, int days, DateTime? start, DateTime? end, string other, string otherValue="")
+        {
+            try
+            {
+                var data = _service.GetFunnelData(areaid, platForm, days, start, end, other, otherValue);
+                return Json(ResultCode.Success, data);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"GetResult:{e.Message}");
+                return Json<FunnelDataModel>(ResultCode.Error, null, "操作失败");
+            }
+        }
     }
 }

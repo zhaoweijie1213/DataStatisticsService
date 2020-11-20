@@ -11,9 +11,18 @@ namespace DataStatistics.Model.ViewModel
         /// </summary>
         public List<string> lengdData { get; set; } = new List<string>();
         /// <summary>
-        /// 数据
+        /// 活跃
         /// </summary>
-        public List<string> seriesData { get; set; } = new List<string>();
+        public List<dataItem> activeData { get; set; } = new List<dataItem>();
+        /// <summary>
+        /// 注册
+        /// </summary>
+        public List<dataItem> registerData { get; set; } = new List<dataItem>();
 
+    }
+    public class dataItem
+    {
+        public int value { get; set; }
+        public string name { get; set; }
     }
 }

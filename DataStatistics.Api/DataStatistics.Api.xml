@@ -101,5 +101,18 @@
             <param name="dateRange">日期范围</param>
             <returns></returns>
         </member>
+        <member name="M:DataStatistics.Api.Controllers.DataStatisticsController.GetFunnelData(System.Int32,System.String,System.Int32,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.String,System.String)">
+            <summary>
+            漏斗图
+            </summary>
+            <param name="areaid"></param>
+            <param name="platForm"></param>
+            <param name="days"></param>
+            <param name="start"></param>
+            <param name="end"></param>
+            <param name="other"></param>
+            <param name="otherValue"></param>
+            <returns></returns>
+        </member>
     </members>
 </doc>

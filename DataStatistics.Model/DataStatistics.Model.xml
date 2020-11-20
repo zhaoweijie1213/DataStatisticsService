@@ -144,9 +144,14 @@
             图例数据
             </summary>
         </member>
-        <member name="P:DataStatistics.Model.ViewModel.FunnelDataModel.seriesData">
+        <member name="P:DataStatistics.Model.ViewModel.FunnelDataModel.activeData">
             <summary>
-            数据
+            活跃
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.FunnelDataModel.registerData">
+            <summary>
+            注册
             </summary>
         </member>
         <member name="T:DataStatistics.Model.ViewModel.SingleSceneModel">

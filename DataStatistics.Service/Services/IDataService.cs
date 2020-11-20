@@ -8,11 +8,7 @@ namespace DataStatistics.Service.Services
 {
     public interface IDataService
     {
-        /// <summary>
-        /// 获取元数据
-        /// </summary>
-        /// <returns></returns>
-        List<UserActionModel> GetUserActions();
+  
         ///// <summary>
         ///// 昨日概况
         ///// </summary>
@@ -55,5 +51,17 @@ namespace DataStatistics.Service.Services
         /// <param name="end"></param>
         /// <returns></returns>
         UserPicModel GetUserPic(int areaid, DateTime start, DateTime end);
+        /// <summary>
+        /// 漏斗图数据
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <param name="platForm"></param>
+        /// <param name="day"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="other"></param>
+        /// <param name="otherValue"></param>
+        /// <returns></returns>
+        FunnelDataModel GetFunnelData(int areaid, string platForm, int days, DateTime? start, DateTime? end, string other, string otherValue);
     }
 }

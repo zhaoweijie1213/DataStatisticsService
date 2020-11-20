@@ -13,16 +13,10 @@ namespace DataStatistics.Service.Services
         /// </summary>
         IRedisCachingProvider _redisProvider { get; set; }
         /// <summary>
-        /// 存入缓存
-        /// </summary>
-        /// <param name="list"></param>
-        /// <returns></returns>
-        bool SetUserAction(List<UserActionModel> list);
-        /// <summary>
-        /// 获取数据
+        /// 30天数据
         /// </summary>
         /// <returns></returns>
-        List<UserActionModel> GetUserAction(int areaid);
+        public List<UserActionModel> GetRawDataForThirty();
         /// <summary>
         /// 获取整个列表
         /// </summary>

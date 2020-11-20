@@ -6,6 +6,8 @@ using DataStatistics.Service.Repositorys;
 using DataStatistics.Service.Services.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic.CompilerServices;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,23 +25,6 @@ namespace DataStatistics.Service.Services.Impl
             _logger = logger;
             _repository = repository;
             _cache = cache;
-        }
-        /// <summary>
-        /// 数据库获取数据
-        /// </summary>
-        /// <returns></returns>
-        public List<UserActionModel> GetUserActions()
-        {
-            try
-            {
-                var res = _repository.GetUserActions();
-                return res;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"GetUserActions:{e.Message}");
-                throw;
-            }
         }
 
         ///// <summary>
@@ -285,14 +270,12 @@ namespace DataStatistics.Service.Services.Impl
                 //近*天
                 if (days!=0)
                 {
-                    //data.xAxis = xAxisTools.DataRange(days);
                     var start = DateTime.Now.AddDays(-days);
                     data.xAxis = xAxisTools.DataRange(days,true);
                     var end = DateTime.Now;
-                    //data.xAxis = xAxisTools.DataRange(days);
                     datelist = xAxisTools.DataRange(days);
                     contition += $"and date between '{start}' and '{end}' ";
-                    //数据
+                    //数据   缓存数据
                     var unitData = _repository.GetActionData(areaid, contition);
                     //活跃
                     List<int> actv = new List<int>();
@@ -427,10 +410,103 @@ namespace DataStatistics.Service.Services.Impl
         /// <summary>
         /// 漏斗图数据
         /// </summary>
+        /// <param name="areaid"></param>
+        /// <param name="platForm"></param>
+        /// <param name="day"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="other"></param>
+        /// <param name="otherValue"></param>
         /// <returns></returns>
-        public string GetFunnelData(int areaid)
+        public FunnelDataModel GetFunnelData(int areaid,string platForm,int days,DateTime? start,DateTime? end,string other,string otherValue="")
         {
-            return "";
+            try
+            {
+                string contition = " ";
+                if (platForm!=PlatFromEnum.All.GetName())
+                {
+                    contition += $" and platForm='{platForm}' ";
+                }
+                FunnelDataModel model = new FunnelDataModel();
+                if (!string.IsNullOrEmpty(otherValue))
+                {
+                    model.lengdData = otherValue.Split(',').ToList();
+                }
+               
+                if (days!=0)
+                {
+                    var st = DateTime.Now.AddDays(-days);
+                    var et = DateTime.Now;
+                    contition += $"and date between '{st}' and '{et}' ";
+                }
+                else
+                {
+                    contition += $"and date between '{start}' and '{end}' ";
+                }
+                //数据
+                var unitData = _repository.GetActionData(areaid, contition);
+                //List<string> dataValue = otherValue.Split(',').ToList();
+                List<dataItem> aitem = new List<dataItem>();
+                List<dataItem> ritem = new List<dataItem>();
+                double asum = 0;
+                double rsum = 0;
+                for (int x = 0; x < model.lengdData.Count; x++)
+                {
+                    if (x==0)
+                    {
+                        asum = unitData.Where(i => i.uid != 0).Where(i =>
+                        {
+                            JObject jo = JsonConvert.DeserializeObject<JObject>(i.data);
+                            bool res = jo.Value<string>(other) == model.lengdData[x] ? true : false;
+                            return res;
+                        }).GroupBy(i => i.uid).ToList().Count;
+                        rsum = unitData.Where(i => i.uid == 0).Where(i =>
+                        {
+                            JObject jo = JsonConvert.DeserializeObject<JObject>(i.data);
+                            bool res = jo.Value<string>(other) == model.lengdData[x] ? true : false;
+                            return res;
+                        }).ToList().Count;
+                        aitem.Add(new dataItem() { value = 100, name = model.lengdData[x] });
+                        ritem.Add(new dataItem() { value = 100, name = model.lengdData[x] });
+                    }
+                    else
+                    {
+                        if (asum==0)
+                        {
+                            asum = 1;
+                        }
+                        if (rsum==0)
+                        {
+                            rsum = 1;
+                        }
+                        var acount = unitData.Where(i => i.uid != 0).Where(i =>
+                        {
+                            JObject jo = JsonConvert.DeserializeObject<JObject>(i.data);
+                            bool res = jo.Value<string>(other) == model.lengdData[x] ? true : false;
+                            return res;
+                        }).GroupBy(i => i.uid).ToList().Count;
+                        //model.activeData.Add(acount);
+                        aitem.Add(new dataItem() { value = (int)((acount / asum)*100), name = model.lengdData[x] });
+                        var rcount = unitData.Where(i => i.uid == 0).Where(i =>
+                        {
+                            JObject jo = JsonConvert.DeserializeObject<JObject>(i.data);
+                            bool res = jo.Value<string>(other) == model.lengdData[x] ? true : false;
+                            return res;
+                        }).ToList().Count;
+
+                        ritem.Add(new dataItem() { value = (int)((rcount/rsum)*100), name = model.lengdData[x] });
+                    }
+                }
+
+                model.activeData = aitem;
+                model.registerData = ritem;
+                return model;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"GetFunnelData:{e.Message}");
+                throw;
+            }
         }
     }
 }

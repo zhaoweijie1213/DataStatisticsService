@@ -27,7 +27,8 @@ namespace DataStatistics.Service.Quartz.Jobs
         {
             try
             {
-                DateTime time = DateTime.Now.AddHours(-24);
+                //30天过期
+                DateTime time = DateTime.Now.AddDays(-30);
                 var redisProvider = _providerFactory.GetRedisProvider("userAction");
                 //获取所有的key
                 List<string> keys = redisProvider.SearchKeys("*", 0);

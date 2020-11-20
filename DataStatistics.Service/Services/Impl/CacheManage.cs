@@ -1,6 +1,9 @@
 ﻿using DataStatistics.Model.mj_log_other;
+using DataStatistics.Service.Repositorys;
 using DataStatistics.Service.Services;
 using EasyCaching.Core;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -10,42 +13,65 @@ namespace DataStatistics.Service.Services.Impl
 {
     public class CacheManage : ICacheManage
     {
+        /// <summary>
+        /// 日志
+        /// </summary>
+        private ILogger<CacheManage> _logger;
+        /// <summary>
+        /// rides
+        /// </summary>
         readonly IEasyCachingProviderFactory _factory;
+        /// <summary>
+        /// rides缓存
+        /// </summary>
         public IRedisCachingProvider _redisProvider { get; set; }
-        public CacheManage(IEasyCachingProviderFactory factory)
+        /// <summary>
+        /// 30天原始数据
+        /// </summary>
+        public List<UserActionModel> rawDataForThirtyDays { get; set; }
+        /// <summary>
+        /// 本地缓存
+        /// </summary>
+        public IMemoryCache  _memoryCache { get; set; }
+        private readonly IMJLogOtherRepository _repository;
+        public CacheManage(IEasyCachingProviderFactory factory, IMemoryCache memoryCache,ILogger<CacheManage> logger, IMJLogOtherRepository repository)
         {
+            _logger = logger;
             _factory = factory;
             _redisProvider = _factory.GetRedisProvider("userAction");
+            _memoryCache = memoryCache;
+            _repository = repository;
         }
 
         /// <summary>
-        /// 设置缓存
+        /// 30天数据
         /// </summary>
-        /// <param name="list"></param>
         /// <returns></returns>
-        public bool SetUserAction(List<UserActionModel> list)
+        public List<UserActionModel> GetRawDataForThirty()
         {
-            //return true;
-            //var provider = _factory.GetCachingProvider("myredisname");
-            var areaids = list.GroupBy(i=>i.areaid).Select(i=>i.Key).ToList();
-            foreach (var areaid in areaids)
+            try
             {
-                var data = list.Where(i=>i.areaid==areaid).ToList();
-                var len = _redisProvider.SAdd(areaid.ToString(),data);
+                List<UserActionModel> data = new List<UserActionModel>();
+                var res = _memoryCache.TryGetValue("rawDataForThirtyDays", out data);
+                if (res)
+                {
+                    return data;
+                }
+                else
+                {
+                    var end = DateTime.Now.Date;
+                    var start = DateTime.Now.Date.AddDays(-30);
+                    data = _repository.GetUserActions(start, end);
+                    _memoryCache.Set("rawDataForThirtyDays",data,TimeSpan.FromHours(24));
+                }
+                return data;
             }
-            string lists = JsonConvert.SerializeObject(list);
-            return true;
-        }
-        /// <summary>
-        /// 获取用户数据
-        /// </summary>
-        /// <param name="list"></param>
-        /// <returns></returns>
-        public List<UserActionModel> GetUserAction(int areaid)
-        {
-            var data= _redisProvider.SMembers<UserActionModel>(areaid.ToString());
-            List<UserActionModel> models = data;
-            return models;
+            catch (Exception e)
+            {
+                _logger.LogError($"GetRawDataForThirty:{e.Message}");
+                throw;
+            }
+           
         }
 
         /// <summary>

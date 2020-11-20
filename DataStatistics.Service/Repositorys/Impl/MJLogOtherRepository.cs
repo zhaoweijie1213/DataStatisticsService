@@ -26,11 +26,11 @@ namespace DataStatistics.Service.Repositorys.Impl
         /// <param name="startTime"></param>
         /// <param name="endTime"></param>
         /// <returns></returns>
-        public List<UserActionModel> GetUserActions()
+        public List<UserActionModel> GetUserActions(DateTime start,DateTime end)
         {
             try
             {
-                var res = _db.Query<UserActionModel>("select * from log_userAction where date <='2020-11-05' and date>'2020-11-04' ").ToList();
+                var res = _db.Query<UserActionModel>($"select * from log_userAction where date <'{end}' and date>='{start}' ").ToList();
                 return res;
             }
             catch (Exception e)
@@ -78,6 +78,25 @@ namespace DataStatistics.Service.Repositorys.Impl
             catch (Exception e)
             {
                 _logger.LogError($"Inster:{e.Message}");
+                throw;
+            }
+        }
+        /// <summary>
+        /// 修改大厅参数
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public bool UpdateAreaParams(AreaParamsModel list)
+        {
+            try
+            {
+                bool res = _db.Update(list);
+                return res;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"UpdateAreaParams:{e.Message}");
                 throw;
             }
         }
