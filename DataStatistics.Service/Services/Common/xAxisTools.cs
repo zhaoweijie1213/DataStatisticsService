@@ -63,5 +63,55 @@ namespace DataStatistics.Service.Services.Common
             }
             return dateList;
         }
+        /// <summary>
+        /// 实时时间x轴坐标列表
+        /// </summary>
+        /// <param name="type">0秒,1分,2时</param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static List<string> GetRealTimeList(DateTime startTime, DateTime endTime, int type, int value)
+        {
+                TimeSpan time = endTime - startTime;
+                List<string> list = new List<string>();
+                if (type == 1)
+                {
+                    var s = time.TotalMinutes;
+                    int count = (int)s / value;
+                    for (int i = 0; i <= count; i++)
+                    {
+                        var xValue = startTime.AddMinutes(i * value);
+                        list.Add(xValue.ToString("HH:mm"));
+                    }
+                    if (s % value > 0)
+                    {
+                        list.Add(endTime.ToString("HH:mm"));
+                    }
+                    if (s % value < 0)
+                    {
+                        list.RemoveAt(list.Count - 1);
+                        list.Add(endTime.ToString("HH:mm"));
+                    }
+                }
+                if (type == 2)
+                {
+                    var s = time.TotalHours;
+                    int count = (int)s / value;
+                    for (int i = 0; i <= count; i++)
+                    {
+                        var xValue = startTime.AddHours(i * value);
+                        list.Add(xValue.ToString("HH:mm"));
+                    }
+                    if (s % value > 0)
+                    {
+                        list.Add(endTime.ToString("HH:mm"));
+                    }
+                    if (s % value < 0)
+                    {
+                        list.RemoveAt(list.Count - 1);
+                        list.Add(endTime.ToString("HH:mm"));
+                    }
+                }
+                return list;
+        }
     }
 }

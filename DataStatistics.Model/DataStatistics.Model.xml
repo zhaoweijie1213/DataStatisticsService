@@ -139,6 +139,36 @@
             注册
             </summary>
         </member>
+        <member name="T:DataStatistics.Model.ViewModel.platForm">
+            <summary>
+            平台数据
+            </summary>
+        </member>
+        <member name="T:DataStatistics.Model.ViewModel.JobRealData">
+            <summary>
+            实时数据处理
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.JobRealData.Active">
+            <summary>
+            活跃
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.JobRealData.Register">
+            <summary>
+            注册
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.JobRealData.dateTime">
+            <summary>
+            时间戳
+            </summary>
+        </member>
+        <member name="T:DataStatistics.Model.ViewModel.plat">
+            <summary>
+            平台
+            </summary>
+        </member>
         <member name="P:DataStatistics.Model.ViewModel.FunnelDataModel.lengdData">
             <summary>
             图例数据

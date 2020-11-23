@@ -46,7 +46,7 @@ namespace DataStatistics.Service.Quartz.Impl
                 var redisProvider = _providerFactory.GetRedisProvider("userAction");
                 #region 昨日概况总结
                 //获取所有的key
-                List<string> keys = redisProvider.SearchKeys("*", 0);
+                List<string> keys = redisProvider.SearchKeys("*", 0).Where(i => !i.Contains("r")).ToList();
                 foreach (var key in keys)
                 {
                     var length = redisProvider.LLen(key);
@@ -94,6 +94,8 @@ namespace DataStatistics.Service.Quartz.Impl
                     list.Add(android);
                     var res = _repository.Insert(list);
                     _logger.LogInformation($"更新:{res}条数据,时间:{DateTime.Now:yyyy-MMM-dd HH:mm:ss:ffff}");
+
+
                 }
                 #endregion
 

@@ -16,7 +16,7 @@ namespace DataStatistics.Service.Services
         /// 30天数据
         /// </summary>
         /// <returns></returns>
-        public List<UserActionModel> GetRawDataForThirty();
+        public List<UserActionModel> GetRawDataForThirty(string areaid);
         /// <summary>
         /// 获取整个列表
         /// </summary>

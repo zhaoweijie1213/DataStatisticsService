@@ -110,43 +110,62 @@ namespace DataStatistics.Service.Services.Impl
             DaysDataModel data = new DaysDataModel();
             try
             {
+                var ridesKey = $"r_{value}_{areaid}";
+                long length = _cache._redisProvider.LLen(ridesKey);
+                List<JobRealData> list = _cache._redisProvider.LRange<JobRealData>(ridesKey,0,length);
                 var startTime = DateTime.Now.AddHours(-24);
                 var endTime = DateTime.Now;
-                var realTimeList = GetRealTimeList(startTime,endTime,type,value);
-                data.xAxis = realTimeList;
-                //获取缓存实时数据
-                var list = _cache.GetAllList<UserActionModel>(areaid.ToString());
-                //初始化
-                List<int> all = new List<int>();
-                List<int> android = new List<int>();
-                List<int> ios = new List<int>();
-                List<int> windows = new List<int>();
-                for (int i = 0; i < realTimeList.Count; i++)
+                list = list.Where(i => i.dateTime >= startTime && i.dateTime <= endTime).OrderBy(i=>i.dateTime).ToList();
+                data.xAxis = list.Select(i=>i.dateTime.ToString("HH:mm")).ToList();
+                data.Active = new platForm()
                 {
-                    DateTime st;
-                    if (i==0)
-                    {
-                        st = Convert.ToDateTime(startTime.ToString($"yyyy-MM-dd {realTimeList[i]}"));
-                    }
-                    else
-                    {
-                        st = Convert.ToDateTime(startTime.ToString($"yyyy-MM-dd {realTimeList[i - 1]}"));
-                    }
-                    var et = Convert.ToDateTime(startTime.ToString($"yyyy-MM-dd {realTimeList[i]}"));
-                    //时间段内数据
-                    var dataItem = list.Where(i => i.date >= st && i.date < et);
-                    //活跃用户
-                    data.Active.All.Add(dataItem.Where(i => i.uid != 0).GroupBy(i => i.uid).Count());
-                    data.Active.Android.Add(dataItem.Where(i => i.uid != 0&&i.platForm==   PlatFromEnum.Android.GetName()).GroupBy(i => i.uid).Count());
-                    data.Active.IOS.Add(dataItem.Where(i => i.uid != 0&&i.platForm== PlatFromEnum.IOS.GetName()).GroupBy(i => i.uid).Count());
-                    data.Active.Windows.Add(dataItem.Where(i => i.uid != 0&&i.platForm== PlatFromEnum.Windows.GetName()).GroupBy(i => i.uid).Count());
+                    All = list.Select(i=>i.Active.All).ToList(),
+                    Android= list.Select(i => i.Active.Android).ToList(),
+                    IOS= list.Select(i => i.Active.IOS).ToList(),
+                    Windows= list.Select(i => i.Active.Windows).ToList()
+                };
+                data.Register = new platForm()
+                {
+                    All = list.Select(i => i.Register.All).ToList(),
+                    Android = list.Select(i => i.Register.Android).ToList(),
+                    IOS = list.Select(i => i.Register.IOS).ToList(),
+                    Windows = list.Select(i => i.Register.Windows).ToList()
+                };
+                //var realTimeList = xAxisTools.GetRealTimeList(startTime,endTime,type,value);
+                //data.xAxis = realTimeList;
+                ////获取缓存实时数据
+                //var list = _cache.GetAllList<UserActionModel>(areaid.ToString());
+                ////初始化
+                //List<int> all = new List<int>();
+                //List<int> android = new List<int>();
+                //List<int> ios = new List<int>();
+                //List<int> windows = new List<int>();
+                //for (int i = 0; i < realTimeList.Count; i++)
+                //{
+                //    DateTime st;
+                //    if (i==0)
+                //    {
+                //        st = Convert.ToDateTime(startTime.ToString($"yyyy-MM-dd {realTimeList[i]}"));
+                //    }
+                //    else
+                //    {
+                //        st = Convert.ToDateTime(startTime.ToString($"yyyy-MM-dd {realTimeList[i - 1]}"));
+                //    }
+                //    var et = Convert.ToDateTime(startTime.ToString($"yyyy-MM-dd {realTimeList[i]}"));
+                //    //时间段内数据
+                //    var dataItem = list.Where(i => i.date >= st && i.date < et);
+                //    //活跃用户
+                //    data.Active.All.Add(dataItem.Where(i => i.uid != 0).GroupBy(i => i.uid).Count());
+                //    data.Active.Android.Add(dataItem.Where(i => i.uid != 0&&i.platForm==   PlatFromEnum.Android.GetName()).GroupBy(i => i.uid).Count());
+                //    data.Active.IOS.Add(dataItem.Where(i => i.uid != 0&&i.platForm== PlatFromEnum.IOS.GetName()).GroupBy(i => i.uid).Count());
+                //    data.Active.Windows.Add(dataItem.Where(i => i.uid != 0&&i.platForm== PlatFromEnum.Windows.GetName()).GroupBy(i => i.uid).Count());
 
-                    //注册用户
-                    data.Register.All.Add(dataItem.Where(i => i.uid == 0).Count());
-                    data.Register.Android.Add(dataItem.Where(i => i.uid == 0&&i.platForm== PlatFromEnum.Android.GetName()).Count());
-                    data.Register.IOS.Add(dataItem.Where(i => i.uid == 0 && i.platForm == PlatFromEnum.IOS.GetName()).Count());
-                    data.Register.Windows.Add(dataItem.Where(i => i.uid == 0 && i.platForm == PlatFromEnum.Windows.GetName()).Count());
-                }
+                //    //注册用户
+                //    data.Register.All.Add(dataItem.Where(i => i.uid == 0).Count());
+                //    data.Register.Android.Add(dataItem.Where(i => i.uid == 0&&i.platForm== PlatFromEnum.Android.GetName()).Count());
+                //    data.Register.IOS.Add(dataItem.Where(i => i.uid == 0 && i.platForm == PlatFromEnum.IOS.GetName()).Count());
+                //    data.Register.Windows.Add(dataItem.Where(i => i.uid == 0 && i.platForm == PlatFromEnum.Windows.GetName()).Count());
+                //}
             }
             catch (Exception e)
             {
@@ -160,64 +179,7 @@ namespace DataStatistics.Service.Services.Impl
 
 
 
-        /// <summary>
-        /// 实时时间x轴坐标列表
-        /// </summary>
-        /// <param name="type">0秒,1分,2时</param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public List<string> GetRealTimeList(DateTime startTime,DateTime endTime,int type, int value)
-        {
-            try
-            {
-                TimeSpan time = endTime - startTime;
-                List<string> list = new List<string>();
-                if (type == 1)
-                {
-                    var s = time.TotalMinutes;
-                    int count = (int)s / value;
-                    for (int i = 0; i <= count; i++)
-                    {
-                        var xValue = startTime.AddMinutes(i * value);
-                        list.Add(xValue.ToString("HH:mm"));
-                    }
-                    if (s % value > 0)
-                    {
-                        list.Add(endTime.ToString("HH:mm"));
-                    }
-                    if (s % value < 0)
-                    {
-                        list.RemoveAt(list.Count - 1);
-                        list.Add(endTime.ToString("HH:mm"));
-                    }
-                }
-                if (type == 2)
-                {
-                    var s = time.TotalHours;
-                    int count = (int)s / value;
-                    for (int i = 0; i <= count; i++)
-                    {
-                        var xValue = startTime.AddHours(i * value);
-                        list.Add(xValue.ToString("HH:mm"));
-                    }
-                    if (s % value > 0)
-                    {
-                        list.Add(endTime.ToString("HH:mm"));
-                    }
-                    if (s % value < 0)
-                    {
-                        list.RemoveAt(list.Count - 1);
-                        list.Add(endTime.ToString("HH:mm"));
-                    }
-                }
-                return list;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"GetRealTimeList{e.Message}");
-                throw;
-            }
-        }
+
         /// <summary>
         /// 获取自定义参数
         /// </summary>
@@ -274,9 +236,10 @@ namespace DataStatistics.Service.Services.Impl
                     data.xAxis = xAxisTools.DataRange(days,true);
                     var end = DateTime.Now;
                     datelist = xAxisTools.DataRange(days);
-                    contition += $"and date between '{start}' and '{end}' ";
+                    //contition += $"and date between '{start}' and '{end}' ";
                     //数据   缓存数据
-                    var unitData = _repository.GetActionData(areaid, contition);
+                    //var unitData = _repository.GetActionData(areaid, contition);
+                    var unitData = _cache.GetRawDataForThirty(areaid.ToString()).Where(i => i.date >= start && i.date <= end);
                     //活跃
                     List<int> actv = new List<int>();
                     //注册
@@ -285,7 +248,6 @@ namespace DataStatistics.Service.Services.Impl
                     {
                         var x = datelist[i];
                         DateTime st = Convert.ToDateTime(x);
-                        //data.xAxis.Add(x);
                         var et = Convert.ToDateTime(datelist[i + 1]);
                         var acount = unitData.Where(i => i.uid!=0&& i.date>=st&&i.date<et).GroupBy(i=>i.uid).Count();
                         var rcount = unitData.Where(i => i.uid==0&& i.date>=st&&i.date<et).Count();

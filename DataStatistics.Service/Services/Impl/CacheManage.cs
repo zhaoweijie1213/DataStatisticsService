@@ -47,12 +47,12 @@ namespace DataStatistics.Service.Services.Impl
         /// 30天数据
         /// </summary>
         /// <returns></returns>
-        public List<UserActionModel> GetRawDataForThirty()
+        public List<UserActionModel> GetRawDataForThirty(string areaid)
         {
             try
             {
                 List<UserActionModel> data = new List<UserActionModel>();
-                var res = _memoryCache.TryGetValue("rawDataForThirtyDays", out data);
+                var res = _memoryCache.TryGetValue(areaid, out data);
                 if (res)
                 {
                     return data;
@@ -62,7 +62,13 @@ namespace DataStatistics.Service.Services.Impl
                     var end = DateTime.Now.Date;
                     var start = DateTime.Now.Date.AddDays(-30);
                     data = _repository.GetUserActions(start, end);
-                    _memoryCache.Set("rawDataForThirtyDays",data,TimeSpan.FromHours(24));
+                    var areaids = data.GroupBy(i => i.areaid).Select(i=>i.Key).ToList();
+                    foreach (var item in areaids)
+                    {
+                        //固定每天00:00点过期
+                        _memoryCache.Set(item.ToString(), data, DateTimeOffset.Now.Date.AddDays(1));
+                    }
+                  
                 }
                 return data;
             }

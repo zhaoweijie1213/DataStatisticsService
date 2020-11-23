@@ -31,8 +31,10 @@ namespace DataStatistics.Service.Services.DataProcessingl.Impl
         [CapSubscribe("Data.Recive")]
         public void SubscribeWithnoController(UserActionModel model)
         {
+            List<UserActionModel> list = new List<UserActionModel>();
+            list.Add(model);
             //向rides list添加元素
-            long length = _cache._redisProvider.RPushX(model.areaid.ToString(), model);
+            long length = _cache._redisProvider.RPush(model.areaid.ToString(), list);
             //大厅参数
             string config = model.data;
             JObject jo = JsonConvert.DeserializeObject<JObject>(config);
