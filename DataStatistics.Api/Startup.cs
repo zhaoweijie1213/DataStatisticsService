@@ -69,7 +69,7 @@ namespace DataStatistics.Api
                     Title = "DataStatisticsService",
                     Version = "v1",
                     Description = "数据统计服务",
-                    Contact = new OpenApiContact() { Email = "dyb628@queyouquan.net", Name = "菠菜头" }
+                    Contact = new OpenApiContact() { Email = "949210784@QQ.COM", Name = "zhaoweijie" }
                 });
                 //添加header验证信息
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -103,34 +103,34 @@ namespace DataStatistics.Api
                 c.IncludeXmlComments(Path.Combine(baseDirectory, "DataStatistics.Model.xml"));
             });
             //cap
-            //services.AddCap(options =>
-            //{
-            //    options.UseMySql(Configuration.GetConnectionString("dotnet_cap_mysql"));
-            //    options.UseRabbitMQ(config =>
-            //    {
-            //        config.HostName = "";
-            //        config.UserName = "";
-            //        config.Port = 5072;
-            //        config.Password = "";
-            //        config.ExchangeName = "";
-            //    });
+            services.AddCap(options =>
+            {
+                options.UseMySql(Configuration.GetConnectionString("dotnet_cap_mysql"));
+                options.UseRabbitMQ(config =>
+                {
+                    config.HostName = Configuration["CAP:CAP_MQ:HostName"];
+                    config.UserName = Configuration["CAP:CAP_MQ:UserName"];
+                    config.Port = Convert.ToInt32(Configuration["CAP:CAP_MQ:Port"]);
+                    config.Password = Configuration["CAP:CAP_MQ:Password"];
+                    config.ExchangeName = Configuration["CAP:CAP_MQ:ExchangeName"];
+                });
 
 
-            //    options.DefaultGroup = "";
+                options.DefaultGroup = Configuration["CAP:DefaultGroup"];
 
 
-            //    options.UseDashboard();
+                options.UseDashboard();
 
-            //    //失败后的重试次数，默认50次；在FailedRetryInterval默认60秒的情况下，即默认重试50*60秒(50分钟)之后放弃失败重试
-            //    options.FailedRetryCount = 10;
+                //失败后的重试次数，默认50次；在FailedRetryInterval默认60秒的情况下，即默认重试50*60秒(50分钟)之后放弃失败重试
+                options.FailedRetryCount = 10;
 
-            //    //失败后的重拾间隔，默认60秒
-            //    options.FailedRetryInterval = 30;
+                //失败后的重拾间隔，默认60秒
+                options.FailedRetryInterval = 30;
 
-            //    //设置成功信息的删除时间默认24*3600秒
-            //    options.SucceedMessageExpiredAfter = 60 * 60;
+                //设置成功信息的删除时间默认24*3600秒
+                options.SucceedMessageExpiredAfter = 60 * 60;
 
-            //});
+            });
             services.AddMvc(options=> {
                 options.Filters.Add<ApiResultFilter>();
             });

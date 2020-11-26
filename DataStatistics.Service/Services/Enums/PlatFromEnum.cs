@@ -17,6 +17,16 @@ namespace DataStatistics.Service.Enums
     }
 
     /// <summary>
+    /// 数据类型
+    /// </summary>
+    public enum DataType
+    {
+        登录=1,
+        按钮=2,
+        自定义=3
+
+    }
+    /// <summary>
     /// 用户状态
     /// </summary>
     public enum UserState
@@ -46,12 +56,44 @@ namespace DataStatistics.Service.Enums
         /// </summary>
         /// <typeparam name="T">枚举</typeparam>
         /// <param name="dic">存储数据的 Dictionary:int,string</param>
-        public static void GetEnumAllNameAndValue<T>(ref Dictionary<int, string> dic)
+        public static Dictionary<int, string> GetEnumAllNameAndValue<T>()
         {
+            Dictionary<int, string> dic = new Dictionary<int, string>();
             foreach (var value in Enum.GetValues(typeof(T)))
             {
                 dic.Add(Convert.ToInt32(value), value.ToString());
             }
+            return dic;
+        }
+
+        /// <summary>
+        /// 获取枚举中的 所有 name
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static List<string> GetEnumAllName<T>()
+        {
+            List<string> dic = new List<string>();
+            foreach (var value in Enum.GetValues(typeof(T)))
+            {
+                dic.Add(value.ToString());
+            }
+            return dic;
+        }
+
+        /// <summary>
+        /// 获取枚举中的 所有 value
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static List<int> GetEnumAllValue<T>()
+        {
+            List<int> dic = new List<int>();
+            foreach (var value in Enum.GetValues(typeof(T)))
+            {
+                dic.Add(Convert.ToInt32(value));
+            }
+            return dic;
         }
     }
 }

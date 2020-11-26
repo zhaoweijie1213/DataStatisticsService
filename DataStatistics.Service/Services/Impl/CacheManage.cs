@@ -16,7 +16,7 @@ namespace DataStatistics.Service.Services.Impl
         /// <summary>
         /// 日志
         /// </summary>
-        private ILogger<CacheManage> _logger;
+        private readonly ILogger<CacheManage> _logger;
         /// <summary>
         /// rides
         /// </summary>
@@ -59,18 +59,19 @@ namespace DataStatistics.Service.Services.Impl
                 }
                 else
                 {
-                    var end = DateTime.Now.Date;
+                    var end = DateTime.Now;
                     var start = DateTime.Now.Date.AddDays(-30);
                     data = _repository.GetUserActions(start, end);
                     var areaids = data.GroupBy(i => i.areaid).Select(i=>i.Key).ToList();
                     foreach (var item in areaids)
                     {
                         //固定每天00:00点过期
-                        _memoryCache.Set(item.ToString(), data, DateTimeOffset.Now.Date.AddDays(1));
+                        var sdata = data.Where(i => i.areaid == item).ToList();
+                        _memoryCache.Set(item.ToString(), sdata, DateTimeOffset.Now.Date.AddDays(1));
                     }
                   
                 }
-                return data;
+                return data.Where(i => i.areaid == Convert.ToInt32(areaid)).ToList();
             }
             catch (Exception e)
             {

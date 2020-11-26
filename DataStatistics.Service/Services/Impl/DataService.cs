@@ -27,15 +27,19 @@ namespace DataStatistics.Service.Services.Impl
             _cache = cache;
         }
 
-        ///// <summary>
-        ///// 昨日概况
-        ///// </summary>
-        ///// <returns></returns>
-        public List<OverallSituationModel> DataSituationForYestoday(int areaid)
+        /// <summary>
+        /// 昨日概况
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <param name="type"></param>
+        /// <param name="version"></param>
+        /// <returns></returns>
+        public List<OverallSituationModel> DataSituationForYestoday(int areaid, int type)
         {
             try
             {
-                var res = _repository.GetSituation(areaid);
+                List<OverallSituationModel> res = new List<OverallSituationModel>();
+                res = _repository.GetSituation(areaid, type);
                 return res;
             }
             catch (Exception e)
@@ -48,14 +52,18 @@ namespace DataStatistics.Service.Services.Impl
         /// <summary>
         /// 近期趋势
         /// </summary>
+        /// <param name="areaid"></param>
+        /// <param name="type"></param>
+        /// <param name="version"></param>
+        /// <param name="time"></param>
         /// <returns></returns>
-        public DaysDataModel ThirtyDaysData(int areaid,DateTime time)
+        public DaysDataModel ThirtyDaysData(int areaid, int type, DateTime time)
         {
             DaysDataModel model = new DaysDataModel();
 
             try
             {
-                var res = _repository.GetThirtyDaysData(areaid,time).OrderBy(i=>i.dataTime).ToList();
+                var res = _repository.GetThirtyDaysData(areaid,type,time).OrderBy(i=>i.dataTime).ToList();
                 List<int> all = new List<int>();
                 List<int> android = new List<int>();
                 List<int> ios = new List<int>();
@@ -66,14 +74,14 @@ namespace DataStatistics.Service.Services.Impl
                     var itemData = res.Where(i=>i.dataTime==itemDate).ToList();
                     if (itemData.Count>0)
                     {
-                        model.Active.All.Add(itemData.FirstOrDefault(i => i.platForm == "All").activeUsers);
-                        model.Register.All.Add(itemData.FirstOrDefault(i => i.platForm == "All").registeredUsers);
-                        model.Active.Android.Add(itemData.FirstOrDefault(i => i.platForm == "Android").activeUsers);
-                        model.Register.Android.Add(itemData.FirstOrDefault(i => i.platForm == "Android").registeredUsers);
-                        model.Active.IOS.Add(itemData.FirstOrDefault(i => i.platForm == "IOS").activeUsers);
-                        model.Register.IOS.Add(itemData.FirstOrDefault(i => i.platForm == "IOS").registeredUsers);
-                        model.Active.Windows.Add(itemData.FirstOrDefault(i => i.platForm == "Windows").activeUsers);
-                        model.Register.Windows.Add(itemData.FirstOrDefault(i => i.platForm == "Windows").registeredUsers);
+                        model.Active.All.Add(itemData.FirstOrDefault(i => i.platForm == PlatFromEnum.All.GetName()).activeUsers);
+                        model.Register.All.Add(itemData.FirstOrDefault(i => i.platForm == PlatFromEnum.All.GetName()).registeredUsers);
+                        model.Active.Android.Add(itemData.FirstOrDefault(i => i.platForm == PlatFromEnum.Android.GetName()).activeUsers);
+                        model.Register.Android.Add(itemData.FirstOrDefault(i => i.platForm == PlatFromEnum.Android.GetName()).registeredUsers);
+                        model.Active.IOS.Add(itemData.FirstOrDefault(i => i.platForm == PlatFromEnum.IOS.GetName()).activeUsers);
+                        model.Register.IOS.Add(itemData.FirstOrDefault(i => i.platForm == PlatFromEnum.IOS.GetName()).registeredUsers);
+                        model.Active.Windows.Add(itemData.FirstOrDefault(i => i.platForm == PlatFromEnum.Windows.GetName()).activeUsers);
+                        model.Register.Windows.Add(itemData.FirstOrDefault(i => i.platForm == PlatFromEnum.Windows.GetName()).registeredUsers);
                     }
                     else
                     {
@@ -102,15 +110,24 @@ namespace DataStatistics.Service.Services.Impl
         /// 实时数据
         /// </summary>
         /// <param name="areaid"></param>
-        /// <param name="type">0秒,1分,2时</param>
         /// <param name="value"></param>
+        /// <param name="type"></param>
+        /// <param name="version"></param>
         /// <returns></returns>
-        public DaysDataModel RealTimeData(int areaid,int type,int value)
+        public DaysDataModel RealTimeData(int areaid,int value, int type,string version)
         {
             DaysDataModel data = new DaysDataModel();
             try
             {
-                var ridesKey = $"r_{value}_{areaid}";
+                string ridesKey = "";
+                if (string.IsNullOrEmpty(version))
+                {
+                    ridesKey = $"r_{value}_{type}_{areaid}";
+                }
+                else
+                {
+                    ridesKey = $"r_{value}_{type}_{version}_{areaid}";
+                }
                 long length = _cache._redisProvider.LLen(ridesKey);
                 List<JobRealData> list = _cache._redisProvider.LRange<JobRealData>(ridesKey,0,length);
                 var startTime = DateTime.Now.AddHours(-24);
@@ -131,41 +148,6 @@ namespace DataStatistics.Service.Services.Impl
                     IOS = list.Select(i => i.Register.IOS).ToList(),
                     Windows = list.Select(i => i.Register.Windows).ToList()
                 };
-                //var realTimeList = xAxisTools.GetRealTimeList(startTime,endTime,type,value);
-                //data.xAxis = realTimeList;
-                ////获取缓存实时数据
-                //var list = _cache.GetAllList<UserActionModel>(areaid.ToString());
-                ////初始化
-                //List<int> all = new List<int>();
-                //List<int> android = new List<int>();
-                //List<int> ios = new List<int>();
-                //List<int> windows = new List<int>();
-                //for (int i = 0; i < realTimeList.Count; i++)
-                //{
-                //    DateTime st;
-                //    if (i==0)
-                //    {
-                //        st = Convert.ToDateTime(startTime.ToString($"yyyy-MM-dd {realTimeList[i]}"));
-                //    }
-                //    else
-                //    {
-                //        st = Convert.ToDateTime(startTime.ToString($"yyyy-MM-dd {realTimeList[i - 1]}"));
-                //    }
-                //    var et = Convert.ToDateTime(startTime.ToString($"yyyy-MM-dd {realTimeList[i]}"));
-                //    //时间段内数据
-                //    var dataItem = list.Where(i => i.date >= st && i.date < et);
-                //    //活跃用户
-                //    data.Active.All.Add(dataItem.Where(i => i.uid != 0).GroupBy(i => i.uid).Count());
-                //    data.Active.Android.Add(dataItem.Where(i => i.uid != 0&&i.platForm==   PlatFromEnum.Android.GetName()).GroupBy(i => i.uid).Count());
-                //    data.Active.IOS.Add(dataItem.Where(i => i.uid != 0&&i.platForm== PlatFromEnum.IOS.GetName()).GroupBy(i => i.uid).Count());
-                //    data.Active.Windows.Add(dataItem.Where(i => i.uid != 0&&i.platForm== PlatFromEnum.Windows.GetName()).GroupBy(i => i.uid).Count());
-
-                //    //注册用户
-                //    data.Register.All.Add(dataItem.Where(i => i.uid == 0).Count());
-                //    data.Register.Android.Add(dataItem.Where(i => i.uid == 0&&i.platForm== PlatFromEnum.Android.GetName()).Count());
-                //    data.Register.IOS.Add(dataItem.Where(i => i.uid == 0 && i.platForm == PlatFromEnum.IOS.GetName()).Count());
-                //    data.Register.Windows.Add(dataItem.Where(i => i.uid == 0 && i.platForm == PlatFromEnum.Windows.GetName()).Count());
-                //}
             }
             catch (Exception e)
             {
@@ -185,11 +167,11 @@ namespace DataStatistics.Service.Services.Impl
         /// </summary>
         /// <param name="areaid"></param>
         /// <returns></returns>
-        public AreaParamsModel GetAreaParams(int areaid) 
+        public AreaParamsModel GetAreaParams(int areaid,int type) 
         {
             try
             {
-                var res = _repository.GetAreaParams(areaid);
+                var res = _repository.GetAreaParams(areaid,type);
                 if (res == null)
                 {
                     res = new AreaParamsModel();
@@ -212,13 +194,17 @@ namespace DataStatistics.Service.Services.Impl
         /// <param name="otherParam">其它参数</param>
         /// <param name="dateRange">日期范围</param>
         /// <returns></returns>
-        public SingleSceneModel GetSingleSceneData(int areaid,int days,string platFrom,string otherParam,string dateRange)
+        public SingleSceneModel GetSingleSceneData(int areaid,int days,string platFrom,string otherParam,string dateRange,int type,string version)
         {
             try
             {
                 SingleSceneModel data = new SingleSceneModel();
                 List<string> datelist = new List<string>();
-                string contition = $" and platForm='{platFrom}' ";
+                string contition = $" and platForm='{platFrom}' and type={type} and version='{version}' ";
+                if (string.IsNullOrEmpty(version))
+                {
+                    contition = $" and platForm='{platFrom}' and type={type} ";
+                }
                 List<string> legendData = new List<string>();
                 if (platFrom== PlatFromEnum.All.GetName())
                 {
@@ -229,17 +215,26 @@ namespace DataStatistics.Service.Services.Impl
                 {
                     legendData.Add(otherParam);
                 }
+                data.legendData = legendData;
                 //近*天
                 if (days!=0)
                 {
-                    var start = DateTime.Now.AddDays(-days);
+                    var start = DateTime.Now.Date.AddDays(-days);
                     data.xAxis = xAxisTools.DataRange(days,true);
                     var end = DateTime.Now;
                     datelist = xAxisTools.DataRange(days);
                     //contition += $"and date between '{start}' and '{end}' ";
                     //数据   缓存数据
                     //var unitData = _repository.GetActionData(areaid, contition);
-                    var unitData = _cache.GetRawDataForThirty(areaid.ToString()).Where(i => i.date >= start && i.date <= end);
+                    List<UserActionModel> unitData = new List<UserActionModel>();
+                    if (string.IsNullOrEmpty(version))
+                    {
+                        unitData = _cache.GetRawDataForThirty(areaid.ToString()).Where(i => i.type == type && i.date >= start && i.date <= end).ToList();
+                    }
+                    else
+                    {
+                        unitData = _cache.GetRawDataForThirty(areaid.ToString()).Where(i => i.type == type && i.version == version && i.date >= start && i.date <= end).ToList();
+                    }
                     //活跃
                     List<int> actv = new List<int>();
                     //注册
@@ -249,14 +244,24 @@ namespace DataStatistics.Service.Services.Impl
                         var x = datelist[i];
                         DateTime st = Convert.ToDateTime(x);
                         var et = Convert.ToDateTime(datelist[i + 1]);
-                        var acount = unitData.Where(i => i.uid!=0&& i.date>=st&&i.date<et).GroupBy(i=>i.uid).Count();
-                        var rcount = unitData.Where(i => i.uid==0&& i.date>=st&&i.date<et).Count();
+                        int acount = 0;
+                        int rcount = 0;
+                        if (platFrom == PlatFromEnum.All.GetName())
+                        {
+                            acount = unitData.Where(i => i.uid != 0 && i.date >= st && i.date < et).GroupBy(i => i.uid).Count();
+                            rcount = unitData.Where(i => i.uid == 0 && i.date >= st && i.date < et).Count();
+                        }
+                        else
+                        {
+                            acount = unitData.Where(i => i.uid != 0 && i.date >= st && i.date < et && i.platForm == platFrom).GroupBy(i => i.uid).Count();
+                            rcount = unitData.Where(i => i.uid == 0 && i.date >= st && i.date < et && i.platForm == platFrom).Count();
+                        }
                         actv.Add(acount);
                         regst.Add(rcount);
                     }
                     data.ActiveData.Add(actv);
                     data.RegisterData.Add(regst);
-                    data.legendData.Add(platFrom);
+                    //data.legendData.Add(platFrom);
                 }
                 //日期范围
                 if (!string.IsNullOrEmpty(dateRange))
@@ -280,14 +285,24 @@ namespace DataStatistics.Service.Services.Impl
                         DateTime st = Convert.ToDateTime(x);
                         //data.xAxis.Add(x);
                         var et = Convert.ToDateTime(datelist[i + 1]);
-                        var acount = unitData.Where(i => i.uid!=0&& i.date >= st && i.date < et).GroupBy(i=>i.uid).Count();
-                        var rcount = unitData.Where(i => i.uid == 0 && i.date >= st && i.date < et).Count();
+                        int acount = 0;
+                        int rcount = 0;
+                        if (platFrom == PlatFromEnum.All.GetName())
+                        {
+                            acount = unitData.Where(i => i.uid != 0 && i.date >= st && i.date < et).GroupBy(i => i.uid).Count();
+                            rcount = unitData.Where(i => i.uid == 0 && i.date >= st && i.date < et).Count();
+                        }
+                        else
+                        {
+                            acount = unitData.Where(i => i.uid != 0 && i.date >= st && i.date < et && i.platForm == platFrom).GroupBy(i => i.uid).Count();
+                            rcount = unitData.Where(i => i.uid == 0 && i.date >= st && i.date < et && i.platForm == platFrom).Count();
+                        }
                         actv.Add(acount);
                         regst.Add(rcount);
                     }
                     data.ActiveData.Add(actv);
                     data.RegisterData.Add(regst);
-                    data.legendData.Add(platFrom);
+                    //data.legendData.Add(platFrom);
                 }
                 if (!string.IsNullOrEmpty(otherParam))
                 {
@@ -304,8 +319,18 @@ namespace DataStatistics.Service.Services.Impl
                         DateTime st = Convert.ToDateTime(x);
                         //data.xAxis.Add(x);
                         var et = Convert.ToDateTime(datelist[i + 1]);
-                        var acount = unitData.Where(i => i.uid != 0 && i.date >= st && i.date < et && i.data.Contains(otherParam)).GroupBy(i => i.uid).Count();
-                        var rcount = unitData.Where(i => i.uid == 0 && i.date >= st && i.date < et && i.data.Contains(otherParam)).Count();
+                        int acount = 0;
+                        int rcount = 0;
+                        if (platFrom == PlatFromEnum.All.GetName())
+                        {
+                            acount = unitData.Where(i => i.uid != 0 && i.date >= st && i.date < et).GroupBy(i => i.uid).Count();
+                            rcount = unitData.Where(i => i.uid == 0 && i.date >= st && i.date < et).Count();
+                        }
+                        else
+                        {
+                            acount = unitData.Where(i => i.uid != 0 && i.date >= st && i.date < et && i.platForm == platFrom).GroupBy(i => i.uid).Count();
+                            rcount = unitData.Where(i => i.uid == 0 && i.date >= st && i.date < et && i.platForm == platFrom).Count();
+                        }
                         actv.Add(acount);
                         regst.Add(rcount);
                     }
@@ -329,17 +354,23 @@ namespace DataStatistics.Service.Services.Impl
         /// <param name="areaid"></param>
         /// <param name="strat"></param>
         /// <param name="end"></param>
+        /// <param name="type"></param>
+        /// <param name="version"></param>
         /// <returns></returns>
-        public UserPicModel GetUserPic(int areaid,DateTime start, DateTime end)
+        public UserPicModel GetUserPic(int areaid,DateTime start, DateTime end,int type,string version)
         {
             try
             {
                 UserPicModel res = new UserPicModel();
-                string contition = $" and date between '{start}' and '{end}'";
+                string contition = $" and type={type} and version='{version}' and date between '{start}' and '{end}'";
+                if (string.IsNullOrEmpty(version))
+                {
+                    contition = $" and type={type}  and date between '{start}' and '{end}'";
+                }
                 //数据
                 var unitData = _repository.GetActionData(areaid, contition);
                 Dictionary<int, string> plats=new Dictionary<int, string>();
-                PlatFromEnumExt.GetEnumAllNameAndValue<PlatFromEnum>(ref plats);
+                plats = PlatFromEnumExt.GetEnumAllNameAndValue<PlatFromEnum>();
                 foreach (var item in plats)
                 {
                     string plat = item.Value;
@@ -380,14 +411,18 @@ namespace DataStatistics.Service.Services.Impl
         /// <param name="other"></param>
         /// <param name="otherValue"></param>
         /// <returns></returns>
-        public FunnelDataModel GetFunnelData(int areaid,string platForm,int days,DateTime? start,DateTime? end,string other,string otherValue="")
+        public FunnelDataModel GetFunnelData(int areaid, string platForm, int days, DateTime? start, DateTime? end, string other, string otherValue, int type, string version)
         {
             try
             {
                 string contition = " ";
                 if (platForm!=PlatFromEnum.All.GetName())
                 {
-                    contition += $" and platForm='{platForm}' ";
+                    contition += $" and platForm='{platForm}' and type={type} ";
+                }
+                if (!string.IsNullOrEmpty(version))
+                {
+                    contition += $" and version='{version}' ";
                 }
                 FunnelDataModel model = new FunnelDataModel();
                 if (!string.IsNullOrEmpty(otherValue))
@@ -407,7 +442,6 @@ namespace DataStatistics.Service.Services.Impl
                 }
                 //数据
                 var unitData = _repository.GetActionData(areaid, contition);
-                //List<string> dataValue = otherValue.Split(',').ToList();
                 List<dataItem> aitem = new List<dataItem>();
                 List<dataItem> ritem = new List<dataItem>();
                 double asum = 0;
@@ -419,13 +453,13 @@ namespace DataStatistics.Service.Services.Impl
                         asum = unitData.Where(i => i.uid != 0).Where(i =>
                         {
                             JObject jo = JsonConvert.DeserializeObject<JObject>(i.data);
-                            bool res = jo.Value<string>(other) == model.lengdData[x] ? true : false;
+                            bool res = jo.Value<string>(other) == model.lengdData[x];
                             return res;
                         }).GroupBy(i => i.uid).ToList().Count;
                         rsum = unitData.Where(i => i.uid == 0).Where(i =>
                         {
                             JObject jo = JsonConvert.DeserializeObject<JObject>(i.data);
-                            bool res = jo.Value<string>(other) == model.lengdData[x] ? true : false;
+                            bool res = jo.Value<string>(other) == model.lengdData[x];
                             return res;
                         }).ToList().Count;
                         aitem.Add(new dataItem() { value = 100, name = model.lengdData[x] });
@@ -444,7 +478,7 @@ namespace DataStatistics.Service.Services.Impl
                         var acount = unitData.Where(i => i.uid != 0).Where(i =>
                         {
                             JObject jo = JsonConvert.DeserializeObject<JObject>(i.data);
-                            bool res = jo.Value<string>(other) == model.lengdData[x] ? true : false;
+                            bool res = jo.Value<string>(other) == model.lengdData[x];
                             return res;
                         }).GroupBy(i => i.uid).ToList().Count;
                         //model.activeData.Add(acount);
@@ -452,7 +486,7 @@ namespace DataStatistics.Service.Services.Impl
                         var rcount = unitData.Where(i => i.uid == 0).Where(i =>
                         {
                             JObject jo = JsonConvert.DeserializeObject<JObject>(i.data);
-                            bool res = jo.Value<string>(other) == model.lengdData[x] ? true : false;
+                            bool res = jo.Value<string>(other) == model.lengdData[x];
                             return res;
                         }).ToList().Count;
 

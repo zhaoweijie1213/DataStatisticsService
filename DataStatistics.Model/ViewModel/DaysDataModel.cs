@@ -33,6 +33,7 @@ namespace DataStatistics.Model.ViewModel
     /// <summary>
     /// 实时数据处理
     /// </summary>
+    [Serializable]
     public class JobRealData
     {
         /// <summary>
@@ -52,6 +53,7 @@ namespace DataStatistics.Model.ViewModel
     /// <summary>
     /// 平台
     /// </summary>
+    [Serializable]
     public class plat 
     {
         public int All { get; set; }

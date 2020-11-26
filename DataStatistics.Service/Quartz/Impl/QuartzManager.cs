@@ -103,8 +103,8 @@ namespace DataStatistics.Service.Quartz.Impl
                       .Build();
                 var triggerRidesData = TriggerBuilder.Create()
                     .WithIdentity("JobRidesData_Tigger", "JobRidesDataGroup")
-                    .StartNow().WithCronSchedule("0 0/20 * * * ?").Build();//每小时触发
-                                                                            //调度器添加任务
+                    .StartNow().WithCronSchedule("0 0/20 * * * ?").Build();//每20触发
+                                                                           //调度器添加任务
                 Scheduler.ScheduleJob(JobRidesData, triggerRidesData).Wait();
                 #endregion
                 _logger.LogInformation("LoadScheduleJob:初始化加载任务成功");

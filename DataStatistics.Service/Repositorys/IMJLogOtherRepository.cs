@@ -26,20 +26,27 @@ namespace DataStatistics.Service.Repositorys
         /// <param name="areaid"></param>
         /// <param name="time"></param>
         /// <returns></returns>
-        List<OverallSituationModel> GetSituation(int areaid);
+        List<OverallSituationModel> GetSituation(int areaid, int type);
         /// <summary>
         /// 近期情况
         /// </summary>
         /// <param name="areaid"></param>
         /// <param name="time"></param>
         /// <returns></returns>
-        List<OverallSituationModel> GetThirtyDaysData(int areaid, DateTime time);
+        List<OverallSituationModel> GetThirtyDaysData(int areaid, int type, DateTime time);
         /// <summary>
         /// 获取自定义参数
         /// </summary>
         /// <param name="areaid"></param>
         /// <returns></returns>
-        AreaParamsModel GetAreaParams(int areaid);
+        AreaParamsModel GetAreaParams(int areaid,int type);
+        /// <summary>
+        /// 获取版本号
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        List<string> GetVersion(int areaid);
         /// <summary>
         /// user action查询
         /// </summary>

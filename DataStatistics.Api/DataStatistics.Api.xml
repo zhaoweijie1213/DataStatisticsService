@@ -51,46 +51,52 @@
             </summary>
             <param name="actionExecutedContext"></param>
         </member>
-        <member name="M:DataStatistics.Api.Controllers.DataStatisticsController.DataSituationForYestoday(System.Int32)">
+        <member name="M:DataStatistics.Api.Controllers.DataStatisticsController.DataSituationForYestoday(System.Int32,System.Int32)">
             <summary>
             昨日概况
             </summary>
             <returns></returns>
         </member>
-        <member name="M:DataStatistics.Api.Controllers.DataStatisticsController.ThirtyDaysData(System.Int32,System.DateTime)">
+        <member name="M:DataStatistics.Api.Controllers.DataStatisticsController.ThirtyDaysData(System.Int32,System.Int32,System.DateTime)">
             <summary>
             30天数据
             </summary>
             <param name="areaid"></param>
+            <param name="type"></param>
+            <param name="version"></param>
             <param name="time"></param>
             <returns></returns>
         </member>
-        <member name="M:DataStatistics.Api.Controllers.DataStatisticsController.RealTimeData(System.Int32,System.Int32,System.Int32)">
+        <member name="M:DataStatistics.Api.Controllers.DataStatisticsController.RealTimeData(System.Int32,System.Int32,System.Int32,System.String)">
             <summary>
             实时数据
             </summary>
             <param name="areaid"></param>
-            <param name="type">0:秒,1:分,2:时</param>
             <param name="value"></param>
+            <param name="type"></param>
+            <param name="version"></param>
             <returns></returns>
         </member>
-        <member name="M:DataStatistics.Api.Controllers.DataStatisticsController.GetAreaParams(System.Int32)">
+        <member name="M:DataStatistics.Api.Controllers.DataStatisticsController.GetAreaParams(System.Int32,System.Int32)">
             <summary>
             获取自定义参数
             </summary>
-            <param name="areaid"></param>
+            <param name="areaid">大厅</param>
+            <param name="type">类型</param>
             <returns></returns>
         </member>
-        <member name="M:DataStatistics.Api.Controllers.DataStatisticsController.GetUserPic(System.Int32,System.DateTime,System.DateTime)">
+        <member name="M:DataStatistics.Api.Controllers.DataStatisticsController.GetUserPic(System.Int32,System.DateTime,System.DateTime,System.Int32,System.String)">
             <summary>
             用户画像
             </summary>
             <param name="areaid"></param>
             <param name="start"></param>
             <param name="end"></param>
+            <param name="type"></param>
+            <param name="version"></param>
             <returns></returns>
         </member>
-        <member name="M:DataStatistics.Api.Controllers.DataStatisticsController.GetSingleSceneData(System.Int32,System.Int32,System.String,System.String,System.String)">
+        <member name="M:DataStatistics.Api.Controllers.DataStatisticsController.GetSingleSceneData(System.Int32,System.Int32,System.String,System.String,System.String,System.Int32,System.String)">
             <summary>
             单场景分析
             </summary>
@@ -99,9 +105,11 @@
             <param name="platFrom">平台</param>
             <param name="otherParam">其它参数</param>
             <param name="dateRange">日期范围</param>
+            <param name="type">类型</param>
+            <param name="version">版本号</param>
             <returns></returns>
         </member>
-        <member name="M:DataStatistics.Api.Controllers.DataStatisticsController.GetFunnelData(System.Int32,System.String,System.Int32,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.String,System.String)">
+        <member name="M:DataStatistics.Api.Controllers.DataStatisticsController.GetFunnelData(System.Int32,System.String,System.Int32,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.String,System.String,System.Int32,System.String)">
             <summary>
             漏斗图
             </summary>
@@ -112,6 +120,8 @@
             <param name="end"></param>
             <param name="other"></param>
             <param name="otherValue"></param>
+            <param name="type"></param>
+            <param name="version"></param>
             <returns></returns>
         </member>
     </members>

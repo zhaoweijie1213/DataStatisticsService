@@ -9,6 +9,11 @@
             编号
             </summary>
         </member>
+        <member name="P:DataStatistics.Model.mj_log_other.AreaParamsModel.type">
+            <summary>
+            类型
+            </summary>
+        </member>
         <member name="P:DataStatistics.Model.mj_log_other.AreaParamsModel.areaid">
             <summary>
             区域id
@@ -32,6 +37,11 @@
         <member name="P:DataStatistics.Model.mj_log_other.OverallSituationModel.areaid">
             <summary>
             区域id
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.OverallSituationModel.type">
+            <summary>
+            数据类型
             </summary>
         </member>
         <member name="P:DataStatistics.Model.mj_log_other.OverallSituationModel.activeUsers">

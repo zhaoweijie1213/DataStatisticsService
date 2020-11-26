@@ -17,6 +17,10 @@ namespace DataStatistics.Model.mj_log_other
         /// </summary>
         public int id { get; set; }
         /// <summary>
+        /// 类型
+        /// </summary>
+        public int type { get; set; }
+        /// <summary>
         /// 区域id
         /// </summary>
         public int areaid { get; set; }

@@ -26,6 +26,10 @@ namespace DataStatistics.Model.mj_log_other
         /// </summary>
         public int areaid { get; set; }
         /// <summary>
+        /// 数据类型
+        /// </summary>
+        public int type { get; set; }
+        /// <summary>
         /// 活跃用户
         /// </summary>
         public int activeUsers { get; set; }

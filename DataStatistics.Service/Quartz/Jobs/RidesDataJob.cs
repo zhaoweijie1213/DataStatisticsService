@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace DataStatistics.Service.Quartz.Jobs
@@ -33,7 +34,9 @@ namespace DataStatistics.Service.Quartz.Jobs
                 DateTime time_1 = DateTime.Now.AddHours(-24);
                 var redisProvider = _providerFactory.GetRedisProvider("userAction");
                 //获取所有的key
-                List<string> keys = redisProvider.SearchKeys("*", 0);
+                List<string> keys = redisProvider.SearchKeys("*", 0).Where(i => {
+                    return Regex.IsMatch(i, "^\\d+$") || i.StartsWith("r_");
+                }).ToList();
                 //删除超过24小时的元素
                 foreach (var key in keys)
                 {

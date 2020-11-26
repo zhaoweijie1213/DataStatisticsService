@@ -13,12 +13,12 @@ namespace DataStatistics.Service.Services
         ///// 昨日概况
         ///// </summary>
         ///// <returns></returns>
-        List<OverallSituationModel> DataSituationForYestoday(int areaid);
+        List<OverallSituationModel> DataSituationForYestoday(int areaid, int type);
         /// <summary>
         /// 近期趋势
         /// </summary>
         /// <returns></returns>
-        DaysDataModel ThirtyDaysData(int areaid, DateTime time);
+        DaysDataModel ThirtyDaysData(int areaid, int type, DateTime time);
         /// <summary>
         /// 实时数据
         /// </summary>
@@ -26,13 +26,13 @@ namespace DataStatistics.Service.Services
         /// <param name="type">0秒,1分,2时</param>
         /// <param name="value"></param>
         /// <returns></returns>
-        DaysDataModel RealTimeData(int areaid, int type, int value);
+        DaysDataModel RealTimeData(int areaid, int value, int type, string version);
         /// <summary>
         /// 获取自定义参数
         /// </summary>
         /// <param name="areaid"></param>
         /// <returns></returns>
-        AreaParamsModel GetAreaParams(int areaid);
+        AreaParamsModel GetAreaParams(int areaid,int type);
         /// <summary>
         /// 单场景分析
         /// </summary>
@@ -42,7 +42,7 @@ namespace DataStatistics.Service.Services
         /// <param name="otherParam">其它参数</param>
         /// <param name="dateRange">日期范围</param>
         /// <returns></returns>
-        SingleSceneModel GetSingleSceneData(int areaid, int days, string platFrom, string otherParam, string dateRange);
+        SingleSceneModel GetSingleSceneData(int areaid, int days, string platFrom, string otherParam, string dateRange, int type, string version);
         /// <summary>
         /// 用户画像
         /// </summary>
@@ -50,7 +50,7 @@ namespace DataStatistics.Service.Services
         /// <param name="strat"></param>
         /// <param name="end"></param>
         /// <returns></returns>
-        UserPicModel GetUserPic(int areaid, DateTime start, DateTime end);
+        UserPicModel GetUserPic(int areaid, DateTime start, DateTime end, int type, string version);
         /// <summary>
         /// 漏斗图数据
         /// </summary>
@@ -62,6 +62,6 @@ namespace DataStatistics.Service.Services
         /// <param name="other"></param>
         /// <param name="otherValue"></param>
         /// <returns></returns>
-        FunnelDataModel GetFunnelData(int areaid, string platForm, int days, DateTime? start, DateTime? end, string other, string otherValue);
+        FunnelDataModel GetFunnelData(int areaid, string platForm, int days, DateTime? start, DateTime? end, string other, string otherValue, int type, string version);
     }
 }

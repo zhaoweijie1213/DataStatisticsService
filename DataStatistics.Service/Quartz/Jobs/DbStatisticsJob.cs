@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace DataStatistics.Service.Quartz.Impl
@@ -46,56 +47,35 @@ namespace DataStatistics.Service.Quartz.Impl
                 var redisProvider = _providerFactory.GetRedisProvider("userAction");
                 #region 昨日概况总结
                 //获取所有的key
-                List<string> keys = redisProvider.SearchKeys("*", 0).Where(i => !i.Contains("r")).ToList();
+                List<string> keys = redisProvider.SearchKeys("*", 0).Where(i => !i.Contains("r")).Where(i => {
+                    return Regex.IsMatch(i, "^\\d+$");
+                }).ToList();
                 foreach (var key in keys)
                 {
                     var length = redisProvider.LLen(key);
                     var data = redisProvider.LRange<UserActionModel>(key, 0, length).Where(i => i.date >= startTime && i.date < endtTime).ToList();
-                    List<OverallSituationModel> list = new List<OverallSituationModel>();
-                    //all
-                    OverallSituationModel all = new OverallSituationModel()
+                    ////获取版本号
+                    //List<string> vList = _repository.GetVersion(Convert.ToInt32(key));
+                    //获取类型
+                    List<int> dataType = PlatFromEnumExt.GetEnumAllValue<DataType>();
+                 
+                    foreach (var type in dataType)
                     {
-                        areaid = Convert.ToInt32(key),
-                        activeUsers = data.Where(i => i.uid != 0).Count(),
-                        registeredUsers = data.Where(i => i.uid == 0).Count(),
-                        platForm = PlatFromEnum.All.GetName(),
-                        dataTime = startTime,
-                    };
-                    list.Add(all);
-                    //windows
-                    OverallSituationModel windows = new OverallSituationModel()
-                    {
-                        areaid = Convert.ToInt32(key),
-                        activeUsers = data.Where(i => i.uid != 0 && i.platForm == PlatFromEnum.Windows.GetName()).Count(),
-                        registeredUsers = data.Where(i => i.uid == 0 && i.platForm == PlatFromEnum.Windows.GetName()).Count(),
-                        platForm = PlatFromEnum.Windows.GetName(),
-                        dataTime = startTime,
-                    };
-                    list.Add(windows);
-                    //ios
-                    OverallSituationModel ios = new OverallSituationModel()
-                    {
-                        areaid = Convert.ToInt32(key),
-                        activeUsers = data.Where(i => i.uid != 0 && i.platForm == PlatFromEnum.IOS.GetName()).Count(),
-                        registeredUsers = data.Where(i => i.uid == 0 && i.platForm == PlatFromEnum.IOS.GetName()).Count(),
-                        platForm = PlatFromEnum.IOS.GetName(),
-                        dataTime = startTime,
-                    };
-                    list.Add(ios);
-                    //android
-                    OverallSituationModel android = new OverallSituationModel()
-                    {
-                        areaid = Convert.ToInt32(key),
-                        activeUsers = data.Where(i => i.uid != 0 && i.platForm == PlatFromEnum.Android.GetName()).Count(),
-                        registeredUsers = data.Where(i => i.uid == 0 && i.platForm == PlatFromEnum.Android.GetName()).Count(),
-                        platForm = PlatFromEnum.Android.GetName(),
-                        dataTime = startTime,
-                    };
-                    list.Add(android);
-                    var res = _repository.Insert(list);
-                    _logger.LogInformation($"更新:{res}条数据,时间:{DateTime.Now:yyyy-MMM-dd HH:mm:ss:ffff}");
-
-
+                        var udata = data.Where(i=>i.type==type).ToList();
+                        ////分版本号
+                        //foreach (var v in vList)
+                        //{
+                        //    var vdata = udata.Where(i => i.version == v).ToList();
+                        //    var list=GetList(key,type,v,vdata,startTime);
+                        //    var res = _repository.Insert(list);
+                        //    _logger.LogInformation($"更新:{res}条数据,类型:{type},版本号:{v},时间:{DateTime.Now:yyyy-MMM-dd HH:mm:ss:ffff}");
+                        //}
+                        //所有版本
+                        var all = GetList(key, type, "", udata, startTime);
+                        var ares = _repository.Insert(all);
+                        _logger.LogInformation($"更新:{ares}条数据,类型:{type},时间:{DateTime.Now:yyyy-MMM-dd HH:mm:ss:ffff}");
+                    }
+                   
                 }
                 #endregion
 
@@ -105,6 +85,65 @@ namespace DataStatistics.Service.Quartz.Impl
                 _logger.LogError($"Execute:{e.Message}");
             }
             return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// 数据处理
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="type"></param>
+        /// <param name="version"></param>
+        /// <param name="vdata"></param>
+        /// <param name="startTime"></param>
+        /// <returns></returns>
+        public List<OverallSituationModel> GetList(string key,int type,string version,List<UserActionModel> vdata,DateTime startTime)
+        {
+            List<OverallSituationModel> list = new List<OverallSituationModel>();
+            //all
+            OverallSituationModel all = new OverallSituationModel()
+            {
+                areaid = Convert.ToInt32(key),
+                activeUsers = vdata.Where(i => i.uid != 0).Count(),
+                registeredUsers = vdata.Where(i => i.uid == 0).Count(),
+                platForm = PlatFromEnum.All.GetName(),
+                dataTime = startTime,
+                type = type
+            };
+            list.Add(all);
+            //windows
+            OverallSituationModel windows = new OverallSituationModel()
+            {
+                areaid = Convert.ToInt32(key),
+                activeUsers = vdata.Where(i => i.uid != 0 && i.platForm == PlatFromEnum.Windows.GetName()).Count(),
+                registeredUsers = vdata.Where(i => i.uid == 0 && i.platForm == PlatFromEnum.Windows.GetName()).Count(),
+                platForm = PlatFromEnum.Windows.GetName(),
+                dataTime = startTime,
+                type=type
+            };
+            list.Add(windows);
+            //ios
+            OverallSituationModel ios = new OverallSituationModel()
+            {
+                areaid = Convert.ToInt32(key),
+                activeUsers = vdata.Where(i => i.uid != 0 && i.platForm == PlatFromEnum.IOS.GetName()).Count(),
+                registeredUsers = vdata.Where(i => i.uid == 0 && i.platForm == PlatFromEnum.IOS.GetName()).Count(),
+                platForm = PlatFromEnum.IOS.GetName(),
+                dataTime = startTime,
+                type = type
+            };
+            list.Add(ios);
+            //android
+            OverallSituationModel android = new OverallSituationModel()
+            {
+                areaid = Convert.ToInt32(key),
+                activeUsers = vdata.Where(i => i.uid != 0 && i.platForm == PlatFromEnum.Android.GetName()).Count(),
+                registeredUsers = vdata.Where(i => i.uid == 0 && i.platForm == PlatFromEnum.Android.GetName()).Count(),
+                platForm = PlatFromEnum.Android.GetName(),
+                dataTime = startTime,
+                type = type
+            };
+            list.Add(android);
+            return list;
         }
     }
 }

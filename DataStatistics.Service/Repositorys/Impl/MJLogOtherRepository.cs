@@ -41,18 +41,19 @@ namespace DataStatistics.Service.Repositorys.Impl
         }
 
         /// <summary>
-        /// 获取概况
+        /// 获取昨日概况
         /// </summary>
         /// <param name="areaid"></param>
-        /// <param name="time"></param>
+        /// <param name="type"></param>
+        /// <param name="version"></param>
         /// <returns></returns>
-        public List<OverallSituationModel> GetSituation(int areaid)
+        public List<OverallSituationModel> GetSituation(int areaid,int type)
         {
             try
             {
-                //string sql = $"select * from log_overall_situation where areaid={areaid} and dataTime='{DateTime.Now.Date.AddDays(-1)}'";
+                //昨天日期
                 var time = DateTime.Now.AddDays(-1).Date;
-                string sql = $"select * from log_overall_situation where areaid={areaid} and dataTime='{time}'";
+                string sql = $"select * from log_overall_situation where areaid={areaid} and type={type}  and dataTime='{time}'";
                 var res = _db.Query<OverallSituationModel>(sql).ToList();
                 return res;
             }
@@ -106,12 +107,11 @@ namespace DataStatistics.Service.Repositorys.Impl
         /// <param name="areaid"></param>
         /// <param name="time"></param>
         /// <returns></returns>
-        public List<OverallSituationModel> GetThirtyDaysData(int areaid,DateTime time)
+        public List<OverallSituationModel> GetThirtyDaysData(int areaid,int type,DateTime time)
         {
             try
             {
-                //string sql = $"select * from log_overall_situation where areaid={areaid} and dataTime='{DateTime.Now.Date.AddDays(-1)}'";
-                string sql = $"select * from log_overall_situation where areaid={areaid} and dataTime >='{time}'";
+                string sql = $"select * from log_overall_situation where areaid={areaid} and type={type} and dataTime >='{time}'";
                 var res = _db.Query<OverallSituationModel>(sql).ToList();
                 return res;
             }
@@ -126,12 +126,13 @@ namespace DataStatistics.Service.Repositorys.Impl
         /// 获取自定义参数
         /// </summary>
         /// <param name="areaid"></param>
+        /// <param name="type"></param>
         /// <returns></returns>
-        public AreaParamsModel GetAreaParams(int areaid)
+        public AreaParamsModel GetAreaParams(int areaid,int type)
         {
             try
             {
-                string sql = $"select * from log_area_param where areaid={areaid}";
+                string sql = $"select * from log_area_param where areaid={areaid} and type={type}";
                 var res = _db.QueryFirstOrDefault<AreaParamsModel>(sql);
                 return res;
             }
@@ -142,6 +143,26 @@ namespace DataStatistics.Service.Repositorys.Impl
             }
         }
 
+        /// <summary>
+        /// 获取版本号
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public List<string> GetVersion(int areaid)
+        {
+            try
+            {
+                string sql = $"select version from log_userAction where areaid ={areaid} group by version";
+                var res = _db.Query<string>(sql).ToList();
+                return res;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"GetVersion:{e.Message}");
+                throw;
+            }
+        }
         /// <summary>
         /// user action查询
         /// </summary>
