@@ -1,0 +1,238 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DataStatistics.Model</name>
+    </assembly>
+    <members>
+        <member name="P:DataStatistics.Model.mj_log_other.AreaParamsModel.id">
+            <summary>
+            编号
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.AreaParamsModel.type">
+            <summary>
+            类型
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.AreaParamsModel.areaid">
+            <summary>
+            区域id
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.AreaParamsModel.configKeys">
+            <summary>
+            参数
+            </summary>
+        </member>
+        <member name="T:DataStatistics.Model.mj_log_other.OverallSituationModel">
+            <summary>
+            总体情况
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.OverallSituationModel.id">
+            <summary>
+            编号
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.OverallSituationModel.areaid">
+            <summary>
+            区域id
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.OverallSituationModel.type">
+            <summary>
+            数据类型
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.OverallSituationModel.activeUsers">
+            <summary>
+            活跃用户
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.OverallSituationModel.registeredUsers">
+            <summary>
+            注册用户
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.OverallSituationModel.platForm">
+            <summary>
+            平台
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.OverallSituationModel.dataTime">
+            <summary>
+            数据时间
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.id">
+            <summary>
+            Desc:
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.type">
+            <summary>
+            Desc:类型
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.date">
+            <summary>
+            Desc:时间
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.areaid">
+            <summary>
+            Desc:
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.uid">
+            <summary>
+            Desc:
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.version">
+            <summary>
+            Desc:版本
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.data">
+            <summary>
+            Desc:数据
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.packageChannel">
+            <summary>
+            Desc:包渠道
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.platForm">
+            <summary>
+            Desc:平台
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.device">
+            <summary>
+            Desc:设备
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.DaysDataModel.xAxis">
+            <summary>
+            X轴坐标
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.DaysDataModel.Active">
+            <summary>
+            活跃
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.DaysDataModel.Register">
+            <summary>
+            注册
+            </summary>
+        </member>
+        <member name="T:DataStatistics.Model.ViewModel.platForm">
+            <summary>
+            平台数据
+            </summary>
+        </member>
+        <member name="T:DataStatistics.Model.ViewModel.JobRealData">
+            <summary>
+            实时数据处理
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.JobRealData.Active">
+            <summary>
+            活跃
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.JobRealData.Register">
+            <summary>
+            注册
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.JobRealData.dateTime">
+            <summary>
+            时间戳
+            </summary>
+        </member>
+        <member name="T:DataStatistics.Model.ViewModel.plat">
+            <summary>
+            平台
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.FunnelDataModel.lengdData">
+            <summary>
+            图例数据
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.FunnelDataModel.activeData">
+            <summary>
+            活跃
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.FunnelDataModel.registerData">
+            <summary>
+            注册
+            </summary>
+        </member>
+        <member name="T:DataStatistics.Model.ViewModel.SingleSceneModel">
+            <summary>
+            单场景
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.SingleSceneModel.xAxis">
+            <summary>
+            x坐标轴
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.SingleSceneModel.legendData">
+            <summary>
+            图例数据
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.SingleSceneModel.ActiveData">
+            <summary>
+            活跃数据
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.SingleSceneModel.RegisterData">
+            <summary>
+            注册数据
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.UserPicModel.legendData">
+            <summary>
+            图例
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.UserPicModel.ActiveData">
+            <summary>
+            数据
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.ViewModel.UserPicModel.RegisterData">
+            <summary>
+            数据
+            </summary>
+        </member>
+    </members>
+</doc>
