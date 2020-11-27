@@ -71,7 +71,7 @@ namespace DataStatistics.Service.Quartz.Impl
                         //    _logger.LogInformation($"更新:{res}条数据,类型:{type},版本号:{v},时间:{DateTime.Now:yyyy-MMM-dd HH:mm:ss:ffff}");
                         //}
                         //所有版本
-                        var all = GetList(key, type, "", udata, startTime);
+                        var all = GetList(key, type, udata, startTime);
                         var ares = _repository.Insert(all);
                         _logger.LogInformation($"更新:{ares}条数据,类型:{type},时间:{DateTime.Now:yyyy-MMM-dd HH:mm:ss:ffff}");
                     }
@@ -92,11 +92,10 @@ namespace DataStatistics.Service.Quartz.Impl
         /// </summary>
         /// <param name="key"></param>
         /// <param name="type"></param>
-        /// <param name="version"></param>
         /// <param name="vdata"></param>
         /// <param name="startTime"></param>
         /// <returns></returns>
-        public List<OverallSituationModel> GetList(string key,int type,string version,List<UserActionModel> vdata,DateTime startTime)
+        public List<OverallSituationModel> GetList(string key,int type,List<UserActionModel> vdata,DateTime startTime)
         {
             List<OverallSituationModel> list = new List<OverallSituationModel>();
             //all
@@ -114,7 +113,7 @@ namespace DataStatistics.Service.Quartz.Impl
             OverallSituationModel windows = new OverallSituationModel()
             {
                 areaid = Convert.ToInt32(key),
-                activeUsers = vdata.Where(i => i.uid != 0 && i.platForm == PlatFromEnum.Windows.GetName()).Count(),
+                activeUsers = vdata.Where(i => i.uid != 0 && i.platForm == PlatFromEnum.Windows.GetName()).GroupBy(i=>i.uid).Count(),
                 registeredUsers = vdata.Where(i => i.uid == 0 && i.platForm == PlatFromEnum.Windows.GetName()).Count(),
                 platForm = PlatFromEnum.Windows.GetName(),
                 dataTime = startTime,
@@ -125,7 +124,7 @@ namespace DataStatistics.Service.Quartz.Impl
             OverallSituationModel ios = new OverallSituationModel()
             {
                 areaid = Convert.ToInt32(key),
-                activeUsers = vdata.Where(i => i.uid != 0 && i.platForm == PlatFromEnum.IOS.GetName()).Count(),
+                activeUsers = vdata.Where(i => i.uid != 0 && i.platForm == PlatFromEnum.IOS.GetName()).GroupBy(i => i.uid).Count(),
                 registeredUsers = vdata.Where(i => i.uid == 0 && i.platForm == PlatFromEnum.IOS.GetName()).Count(),
                 platForm = PlatFromEnum.IOS.GetName(),
                 dataTime = startTime,
@@ -136,7 +135,7 @@ namespace DataStatistics.Service.Quartz.Impl
             OverallSituationModel android = new OverallSituationModel()
             {
                 areaid = Convert.ToInt32(key),
-                activeUsers = vdata.Where(i => i.uid != 0 && i.platForm == PlatFromEnum.Android.GetName()).Count(),
+                activeUsers = vdata.Where(i => i.uid != 0 && i.platForm == PlatFromEnum.Android.GetName()).GroupBy(i => i.uid).Count(),
                 registeredUsers = vdata.Where(i => i.uid == 0 && i.platForm == PlatFromEnum.Android.GetName()).Count(),
                 platForm = PlatFromEnum.Android.GetName(),
                 dataTime = startTime,
