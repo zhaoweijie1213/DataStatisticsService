@@ -1,4 +1,4 @@
-﻿using DataStatistics.Model.mj_log_other;
+﻿  using DataStatistics.Model.mj_log_other;
 using DataStatistics.Service.Enums;
 using DataStatistics.Service.Quartz.Jobs.Interface;
 using DataStatistics.Service.Repositorys;
