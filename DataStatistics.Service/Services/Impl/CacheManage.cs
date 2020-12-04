@@ -1,4 +1,5 @@
 ﻿using DataStatistics.Model.mj_log_other;
+using DataStatistics.Service.Enums;
 using DataStatistics.Service.Repositorys;
 using DataStatistics.Service.Services;
 using EasyCaching.Core;
@@ -34,20 +35,23 @@ namespace DataStatistics.Service.Services.Impl
         /// </summary>
         public IMemoryCache  _memoryCache { get; set; }
         private readonly IMJLogOtherRepository _repository;
-        public CacheManage(IEasyCachingProviderFactory factory, IMemoryCache memoryCache,ILogger<CacheManage> logger, IMJLogOtherRepository repository)
+        private readonly IMJLog3Repository _mjlog3repository;
+        public CacheManage(IEasyCachingProviderFactory factory, IMemoryCache memoryCache,ILogger<CacheManage> logger, IMJLogOtherRepository repository, IMJLog3Repository mjlog3repository)
         {
             _logger = logger;
             _factory = factory;
             _redisProvider = _factory.GetRedisProvider("userAction");
             _memoryCache = memoryCache;
             _repository = repository;
+            _mjlog3repository = mjlog3repository;
         }
 
         /// <summary>
         /// 30天数据
+        /// 只留7天数据
         /// </summary>
         /// <returns></returns>
-        public List<UserActionModel> GetRawDataForThirty(string areaid)
+        public List<UserActionModel> GetRawDataForThirty(string areaid,DateTime start,DateTime end)
         {
             try
             {
@@ -59,19 +63,31 @@ namespace DataStatistics.Service.Services.Impl
                 }
                 else
                 {
-                    var end = DateTime.Now;
-                    var start = DateTime.Now.Date.AddDays(-30);
-                    data = _repository.GetUserActions(start, end);
-                    var areaids = data.GroupBy(i => i.areaid).Select(i=>i.Key).ToList();
-                    foreach (var item in areaids)
+                    int hourCount = (end - start).Hours;
+                    for (int i = 1; i <= hourCount; i++)
                     {
-                        //固定每天00:00点过期
-                        var sdata = data.Where(i => i.areaid == item).ToList();
-                        _memoryCache.Set(item.ToString(), sdata, DateTimeOffset.Now.Date.AddDays(1));
+                        var ktime = start.AddHours(i).ToString("yyyyMMddHH");
+                        long length = _redisProvider.LLen($"{areaid}_t{ktime}");
+                        var idate = _redisProvider.LRange<UserActionModel>($"{areaid}_t{ktime}", 0, length);
+                        data.Concat(idate);
                     }
+                    //var end = DateTime.Now;
+                    //var start = DateTime.Now.Date.AddDays(-30);
+                    //data = _repository.GetUserActions(start, end);
+                    //var areaids = data.GroupBy(i => i.areaid).Select(i=>i.Key).ToList();
+                    //List<int> gameids = _mjlog3repository.GetGameid();
+                    //foreach (var item in gameids)
+                    //{
+                        //int key = item * 100;
+                        //固定每天00:00点过期
+                        //var sdata = data.Where(i => i.areaid == item).ToList();
+                        //long length = _redisProvider.LLen(areaid.ToString());
+                        //data = _redisProvider.LRange<UserActionModel>(areaid.ToString(), 0, length);
+                        _memoryCache.Set(areaid.ToString(), data, DateTimeOffset.Now.Date.AddDays(1));
+                    //}
                   
                 }
-                return data.Where(i => i.areaid == Convert.ToInt32(areaid)).ToList();
+                return data;
             }
             catch (Exception e)
             {
@@ -91,6 +107,44 @@ namespace DataStatistics.Service.Services.Impl
             var length = _redisProvider.LLen(key);
             var data = _redisProvider.LRange<T>(key,0,length-1);
             return data;
+        }
+
+
+        /// <summary>
+        /// 插入redis
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="list"></param>
+        /// <param name="start">开始时间</param>
+        /// <param name="end">结束时间</param>
+        /// <returns></returns>
+        public bool Rpush(int key,List<UserActionModel> list,DateTime start,DateTime end)
+        {
+            try
+            {
+                TimeSpan time = end - start;
+                int hourCount = (int)time.TotalHours;
+                for (int i = 0; i < hourCount; i++)
+                {
+                    var kstart = start.AddHours(i-1);
+                    var kend = start.AddHours(i);
+                    var tkey = kstart.ToString("yyyyMMddHH");
+                    _redisProvider.KeyDel($"{key}_t{tkey}");
+                    var data = list.Where(i => i.date >= kstart && i.date <= kend).ToList();
+                    if (data.Count>0)
+                    {
+                        _redisProvider.RPush($"{key}_t{tkey}",data );
+                        _redisProvider.KeyExpire($"{key}_t{tkey}", (int)KeyExpireTime.unitData);
+                    }
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Rpush:{e.Message}");
+                return false;
+            }   
         }
     }
 }

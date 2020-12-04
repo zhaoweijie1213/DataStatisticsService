@@ -7,5 +7,6 @@ namespace DataStatistics.Service.Quartz.Jobs.Interface
 {
     public interface IRidesDataJob : IJob
     {
+
     }
 }

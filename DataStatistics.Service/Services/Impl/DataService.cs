@@ -105,7 +105,25 @@ namespace DataStatistics.Service.Services.Impl
                 throw;
             }
         }
-
+        /// <summary>
+        /// 获取版本号
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <returns></returns>
+        public List<string> GetVersion(int areaid)
+        {
+            try
+            {
+                var res = _repository.GetAreaVersion(areaid).Select(i => i.version).OrderByDescending(i=>i).ToList();
+                //var res = _cache._redisProvider.LRange<string>($"v_{areaid}", 0, length).OrderByDescending(i=>i).ToList();
+                return res; 
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"GetVersion:{e.Message}");
+                return null;
+            }
+        }
         /// <summary>
         /// 实时数据
         /// </summary>
@@ -200,17 +218,21 @@ namespace DataStatistics.Service.Services.Impl
             {
                 SingleSceneModel data = new SingleSceneModel();
                 List<string> datelist = new List<string>();
-                string contition = $" and platForm='{platFrom}' and type={type} and version='{version}' ";
-                if (string.IsNullOrEmpty(version))
+                string contition = $"  and type={type} ";
+                if (!string.IsNullOrEmpty(version))
                 {
-                    contition = $" and platForm='{platFrom}' and type={type} ";
+                    contition += $"  and version='{version}' ";
+                }
+                if (platFrom != PlatFromEnum.All.GetName())
+                {
+                    contition = $" and platForm='{platFrom}' ";
+                }
+                else
+                {
+                    contition = $" and platForm in('IOS','Android','Windows') ";
                 }
                 List<string> legendData = new List<string>();
-                if (platFrom== PlatFromEnum.All.GetName())
-                {
-                    contition = "";
-                    legendData.Add(PlatFromEnum.All.GetName());
-                }
+                legendData.Add(platFrom);
                 if (!string.IsNullOrEmpty(otherParam))
                 {
                     legendData.Add(otherParam);
@@ -229,11 +251,11 @@ namespace DataStatistics.Service.Services.Impl
                     List<UserActionModel> unitData = new List<UserActionModel>();
                     if (string.IsNullOrEmpty(version))
                     {
-                        unitData = _cache.GetRawDataForThirty(areaid.ToString()).Where(i => i.type == type && i.date >= start && i.date <= end).ToList();
+                        unitData = _cache.GetRawDataForThirty(areaid.ToString(),start,end).Where(i => i.type == type && i.date >= start && i.date <= end).ToList();
                     }
                     else
                     {
-                        unitData = _cache.GetRawDataForThirty(areaid.ToString()).Where(i => i.type == type && i.version == version && i.date >= start && i.date <= end).ToList();
+                        unitData = _cache.GetRawDataForThirty(areaid.ToString(),start,end).Where(i => i.type == type && i.version == version && i.date >= start && i.date <= end).ToList();
                     }
                     //活跃
                     List<int> actv = new List<int>();
@@ -272,7 +294,16 @@ namespace DataStatistics.Service.Services.Impl
                     contition += $"and date between '{start}' and '{end}' ";
                     //data.xAxis = xAxisTools.DataRange(start,end);
                     //数据
-                    var unitData = _repository.GetActionData(areaid, contition);
+                    //var unitData = _repository.GetActionData(areaid, contition);//从缓存取30天数据
+                    List<UserActionModel> unitData = new List<UserActionModel>();
+                    if (string.IsNullOrEmpty(version))
+                    {
+                        unitData = _cache.GetRawDataForThirty(areaid.ToString(),start,end).Where(i => i.type == type && i.date >= start && i.date <= end).ToList();
+                    }
+                    else
+                    {
+                        unitData = _cache.GetRawDataForThirty(areaid.ToString(),start,end).Where(i => i.type == type && i.version == version && i.date >= start && i.date <= end).ToList();
+                    }
                     datelist = xAxisTools.DataRange(start,end);
                     data.xAxis = xAxisTools.DataRange(start, end, true);
                     List<int> actv = new List<int>();
@@ -368,7 +399,16 @@ namespace DataStatistics.Service.Services.Impl
                     contition = $" and type={type}  and date between '{start}' and '{end}'";
                 }
                 //数据
-                var unitData = _repository.GetActionData(areaid, contition);
+                //var unitData = _repository.GetActionData(areaid, contition);//从缓存取30天数据
+                List<UserActionModel> unitData = new List<UserActionModel>();
+                if (string.IsNullOrEmpty(version))
+                {
+                    unitData = _cache.GetRawDataForThirty(areaid.ToString(),start,end).Where(i => i.type == type && i.date >= start && i.date <= end).ToList();
+                }
+                else
+                {
+                    unitData = _cache.GetRawDataForThirty(areaid.ToString(),start,end).Where(i => i.type == type && i.version == version && i.date >= start && i.date <= end).ToList();
+                }
                 Dictionary<int, string> plats=new Dictionary<int, string>();
                 plats = PlatFromEnumExt.GetEnumAllNameAndValue<PlatFromEnum>();
                 foreach (var item in plats)
@@ -415,21 +455,24 @@ namespace DataStatistics.Service.Services.Impl
         {
             try
             {
-                string contition = " ";
-                if (platForm!=PlatFromEnum.All.GetName())
-                {
-                    contition += $" and platForm='{platForm}' and type={type} ";
-                }
+                string contition = $"  and type={type} ";
                 if (!string.IsNullOrEmpty(version))
                 {
                     contition += $" and version='{version}' ";
+                }
+                if (platForm!=PlatFromEnum.All.GetName())
+                {
+                    contition += $" and platForm='{platForm}' ";
+                }
+                else
+                {
+                    contition = $" and platForm in('IOS', 'Android', 'Windows') ";
                 }
                 FunnelDataModel model = new FunnelDataModel();
                 if (!string.IsNullOrEmpty(otherValue))
                 {
                     model.lengdData = otherValue.Split(',').ToList();
                 }
-               
                 if (days!=0)
                 {
                     var st = DateTime.Now.AddDays(-days);

@@ -26,6 +26,17 @@ namespace DataStatistics.Service.Enums
         自定义=3
 
     }
+
+    /// <summary>
+    /// redisKey过期时间
+    /// </summary>
+    public enum KeyExpireTime
+    {
+        //元数据
+        unitData = 3600,
+        //实时数据
+        realData = 86400
+    }
     /// <summary>
     /// 用户状态
     /// </summary>

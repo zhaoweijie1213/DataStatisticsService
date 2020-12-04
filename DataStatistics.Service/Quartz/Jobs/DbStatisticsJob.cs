@@ -54,22 +54,12 @@ namespace DataStatistics.Service.Quartz.Impl
                 {
                     var length = redisProvider.LLen(key);
                     var data = redisProvider.LRange<UserActionModel>(key, 0, length).Where(i => i.date >= startTime && i.date < endtTime).ToList();
-                    ////获取版本号
-                    //List<string> vList = _repository.GetVersion(Convert.ToInt32(key));
                     //获取类型
                     List<int> dataType = PlatFromEnumExt.GetEnumAllValue<DataType>();
                  
                     foreach (var type in dataType)
                     {
                         var udata = data.Where(i=>i.type==type).ToList();
-                        ////分版本号
-                        //foreach (var v in vList)
-                        //{
-                        //    var vdata = udata.Where(i => i.version == v).ToList();
-                        //    var list=GetList(key,type,v,vdata,startTime);
-                        //    var res = _repository.Insert(list);
-                        //    _logger.LogInformation($"更新:{res}条数据,类型:{type},版本号:{v},时间:{DateTime.Now:yyyy-MMM-dd HH:mm:ss:ffff}");
-                        //}
                         //所有版本
                         var all = GetList(key, type, udata, startTime);
                         var ares = _repository.Insert(all);

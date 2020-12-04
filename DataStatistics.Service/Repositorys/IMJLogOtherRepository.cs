@@ -61,5 +61,21 @@ namespace DataStatistics.Service.Repositorys
         /// <param name="list"></param>
         /// <returns></returns>
         bool UpdateAreaParams(AreaParamsModel list);
+        /// <summary>
+        /// 大厅版本号
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <returns></returns>
+        List<AreaVersion> GetAreaVersion(int areaid);
+        /// <summary>
+        /// 删除大厅版本
+        /// </summary>
+        /// <returns></returns>
+        bool DeleteAllAreaVersion();
+        /// <summary>
+        /// 检查是否存在该版本
+        /// </summary>
+        /// <returns></returns>
+        int CheckAreaVersion(int areaid, string version);
     }
 }

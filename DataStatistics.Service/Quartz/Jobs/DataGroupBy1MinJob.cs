@@ -28,11 +28,14 @@ namespace DataStatistics.Service.Quartz.Jobs
         private readonly IEasyCachingProviderFactory _providerFactory;
 
         private readonly IMJLogOtherRepository _repository;
-        public DataGroupBy1MinJob(IEasyCachingProviderFactory providerFactory, ILogger<DataGroupBy1MinJob> logger, IMJLogOtherRepository repository)
+
+        private readonly IMJLog3Repository _mjlog3repository;
+        public DataGroupBy1MinJob(IEasyCachingProviderFactory providerFactory, ILogger<DataGroupBy1MinJob> logger, IMJLogOtherRepository repository, IMJLog3Repository mjlog3repository)
         {
             _providerFactory = providerFactory;
             _logger = logger;
             _repository = repository;
+            _mjlog3repository = mjlog3repository;
         }
         public Task Execute(IJobExecutionContext context)
         {
@@ -40,17 +43,17 @@ namespace DataStatistics.Service.Quartz.Jobs
             {
                 DateTime endtTime = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd HH:mm:00"));
                 DateTime startTime = endtTime.AddMinutes(-1);
+                string ketTime = DateTime.Now.ToString("yyyyMMddHH");
                 var redisProvider = _providerFactory.GetRedisProvider("userAction");
                 //获取所有的key
-                List<string> keys = redisProvider.SearchKeys("*",0).Where(i => !i.Contains("r")).Where(i=> {
-                    return Regex.IsMatch(i, "^\\d+$");
-                }).ToList(); 
-                foreach (var key in keys)
+                List<int> gameids = _mjlog3repository.GetGameid();
+                foreach (var key in gameids)
                 {
-                    var length = redisProvider.LLen(key);
-                    var all_data = redisProvider.LRange<UserActionModel>(key, 0, length).Where(i => i.date >= startTime && i.date < endtTime).ToList();
+                    var length = redisProvider.LLen($"{key}_t{ketTime}");
+                    //获取一个小时内所有数据
+                    var all_data = redisProvider.LRange<UserActionModel>($"{key}_t{ketTime}", 0, length).Where(i => i.date >= startTime && i.date < endtTime).ToList();
                     //获取版本号
-                    List<string> vList = _repository.GetVersion(Convert.ToInt32(key));
+                    List<string> vList = _repository.GetAreaVersion(Convert.ToInt32(key)).Select(i => i.version).ToList();
                     //获取类型
                     List<int> dataType = PlatFromEnumExt.GetEnumAllValue<DataType>();
                     foreach (var type in dataType)
@@ -62,19 +65,19 @@ namespace DataStatistics.Service.Quartz.Jobs
                             List<JobRealData> reg = JobDataProcessing.GetDataList(data, endtTime);
                             //1分钟时间粒度 分版本
                             redisProvider.RPush($"r_1_{type}_{v}_{key}", reg);
-                            _logger.LogInformation($"1分钟时间粒度,版本{v},类别:{type}");
+                            //_logger.LogInformation($"{key}大厅,1分钟时间粒度,版本{v},类别:{type}");
                         }
                         //所有版本
                         List<JobRealData> areg = JobDataProcessing.GetDataList(tdata, endtTime);
                         redisProvider.RPush($"r_1_{type}_{key}", areg);
-                        _logger.LogInformation($"1分钟时间粒度,总数据,类别:{type}");
+                        redisProvider.KeyExpire($"r_1_{type}_{key}", (int)KeyExpireTime.realData);
+                        _logger.LogInformation($"{key}大厅,1分钟时间粒度,类别:{type}");
                     }
                 }
             }
             catch (Exception e)
             {
                 _logger.LogError($"Execute:{e.Message}");
-                throw;
             }
 
             return Task.CompletedTask;

@@ -13,15 +13,25 @@ namespace DataStatistics.Service.Services
         /// </summary>
         IRedisCachingProvider _redisProvider { get; set; }
         /// <summary>
-        /// 30天数据
+        /// 获取元数据
         /// </summary>
         /// <returns></returns>
-        public List<UserActionModel> GetRawDataForThirty(string areaid);
+        List<UserActionModel> GetRawDataForThirty(string areaid, DateTime start, DateTime end);
         /// <summary>
         /// 获取整个列表
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
         List<T> GetAllList<T>(string key);
+        /// <summary>
+        /// 插入redis
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="list"></param>
+        /// <param name="start">开始时间</param>
+        /// <param name="end">结束时间</param>
+        /// <returns></returns>
+        bool Rpush(int key, List<UserActionModel> list, DateTime start, DateTime end);
     }
 }

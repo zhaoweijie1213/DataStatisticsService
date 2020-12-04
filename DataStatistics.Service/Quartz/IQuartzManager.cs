@@ -15,5 +15,6 @@ namespace DataStatistics.Service.Quartz
         /// 结束调度
         /// </summary>
         void EndScheduler();
+
     }
 }

@@ -41,6 +41,7 @@ namespace DataStatistics.Service.Quartz.Jobs
                 DateTime endtTime = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd HH:mm:00"));
                 //5分钟
                 DateTime startTime = endtTime.AddMinutes(-10);
+                string ketTime = DateTime.Now.ToString("yyyyMMddHH");
                 var redisProvider = _providerFactory.GetRedisProvider("userAction");
                 //获取所有的key
                 List<string> keys = redisProvider.SearchKeys("*", 0).Where(i => !i.Contains("r")).Where(i => {
@@ -48,11 +49,12 @@ namespace DataStatistics.Service.Quartz.Jobs
                 }).ToList();
                 foreach (var key in keys)
                 {
-                    var length = redisProvider.LLen(key);
-                    var all_data = redisProvider.LRange<UserActionModel>(key, 0, length).Where(i => i.date >= startTime && i.date < endtTime).ToList();
+                    var length = redisProvider.LLen($"{key}_t{ketTime}");
+                    //获取一个小时内所有数据
+                    var all_data = redisProvider.LRange<UserActionModel>($"{key}_t{ketTime}", 0, length).Where(i => i.date >= startTime && i.date < endtTime).ToList();
 
                     //获取版本号
-                    List<string> vList = _repository.GetVersion(Convert.ToInt32(key));
+                    List<string> vList = _repository.GetAreaVersion(Convert.ToInt32(key)).Select(i => i.version).ToList();
                     //获取类型
                     List<int> dataType = PlatFromEnumExt.GetEnumAllValue<DataType>();
                     foreach (var type in dataType)
@@ -64,12 +66,13 @@ namespace DataStatistics.Service.Quartz.Jobs
                             List<JobRealData> reg = JobDataProcessing.GetDataList(data, endtTime);
                             // 10分钟时间粒度
                             redisProvider.RPush($"r_10_{type}_{v}_{key}", reg);
-                            _logger.LogInformation($"10分钟时间粒度,版本{v},类别:{type}");
+                            //_logger.LogInformation($"{key}大厅,10分钟时间粒度,版本{v},类别:{type}");
                         }
                         List<JobRealData> areg = JobDataProcessing.GetDataList(tdata, endtTime);
                         // 10分钟时间粒度
                         redisProvider.RPush($"r_10_{type}_{key}", areg);
-                        _logger.LogInformation($"10分钟时间粒度,所有版本,类别:{type}");
+                        redisProvider.KeyExpire($"r_10_{type}_{key}", (int)KeyExpireTime.realData);
+                        _logger.LogInformation($"{key}大厅,10分钟时间粒度,类别:{type}");
                     }
                  
                 }
@@ -77,7 +80,6 @@ namespace DataStatistics.Service.Quartz.Jobs
             catch (Exception e)
             {
                 _logger.LogError($"Execute:{e.Message}");
-                throw;
             }
             return Task.CompletedTask;
         }

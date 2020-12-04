@@ -63,8 +63,14 @@
             </summary>
             <param name="areaid"></param>
             <param name="type"></param>
-            <param name="version"></param>
             <param name="time"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataStatistics.Api.Controllers.DataStatisticsController.GetVersion(System.Int32)">
+            <summary>
+            获取版本号
+            </summary>
+            <param name="areaid"></param>
             <returns></returns>
         </member>
         <member name="M:DataStatistics.Api.Controllers.DataStatisticsController.RealTimeData(System.Int32,System.Int32,System.Int32,System.String)">

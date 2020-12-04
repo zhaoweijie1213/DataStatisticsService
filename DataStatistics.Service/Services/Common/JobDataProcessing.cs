@@ -37,8 +37,8 @@ namespace DataStatistics.Service.Services.Common
                                     {
                                         All=data.Where(i=>i.uid==0).Count(),
                                         Android=data.Where(i=>i.uid==0&&i.platForm==PlatFromEnum.Android.GetName()).Count(),
-                                        IOS=data.Where(i=>i.uid==0&&i.platForm==PlatFromEnum.Android.GetName()).Count(),
-                                        Windows=data.Where(i=>i.uid==0&&i.platForm==PlatFromEnum.Android.GetName()).Count(),
+                                        IOS=data.Where(i=>i.uid==0&&i.platForm==PlatFromEnum.IOS.GetName()).Count(),
+                                        Windows=data.Where(i=>i.uid==0&&i.platForm==PlatFromEnum.Windows.GetName()).Count(),
                                     },
                                     dateTime=time
                                 }

@@ -30,7 +30,9 @@ namespace DataStatistics.Service.Quartz.Jobs
             try
             {
                 //30天过期
-                DateTime time = DateTime.Now.AddDays(-30);
+                //DateTime time = DateTime.Now.AddDays(-30);
+                //七天过期
+                DateTime time = DateTime.Now.AddDays(-7);
                 DateTime time_1 = DateTime.Now.AddHours(-24);
                 var redisProvider = _providerFactory.GetRedisProvider("userAction");
                 //获取所有的key
@@ -47,23 +49,24 @@ namespace DataStatistics.Service.Quartz.Jobs
                         foreach (var item in data)
                         {
                             redisProvider.LRem(key, 0, item);
+                            _logger.LogInformation($"实时数据过期：{item}");
                         }
                     }
-                    else
-                    {
-                        var length = redisProvider.LLen(key);
-                        var data = redisProvider.LRange<UserActionModel>(key, 0, length).Where(i => i.date <= time).ToList();
-                        foreach (var item in data)
-                        {
-                            redisProvider.LRem(key, 0, item);
-                        }
-                    }
+                    //else
+                    //{
+                    //    var length = redisProvider.LLen(key);
+                    //    var data = redisProvider.LRange<UserActionModel>(key, 0, length).Where(i => i.date <= time).ToList();
+                    //    foreach (var item in data)
+                    //    {
+                    //        redisProvider.LRem(key, 0, item);
+                    //        _logger.LogInformation($"过期：{item}");
+                    //    }
+                    //}
                 }
             }
             catch (Exception e)
             {
                 _logger.LogError($"Execute:{e.Message}");
-                throw;
             }
             return Task.CompletedTask;
         }

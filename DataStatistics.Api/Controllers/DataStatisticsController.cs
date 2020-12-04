@@ -48,7 +48,6 @@ namespace DataStatistics.Api.Controllers
         /// </summary>
         /// <param name="areaid"></param>
         /// <param name="type"></param>
-        /// <param name="version"></param>
         /// <param name="time"></param>
         /// <returns></returns>
         [HttpGet("ThirtyDaysData")]
@@ -65,6 +64,25 @@ namespace DataStatistics.Api.Controllers
                 return Json<DaysDataModel>(ResultCode.Error, null, "操作失败");
             }
 
+        }
+        /// <summary>
+        /// 获取版本号
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <returns></returns>
+        [HttpGet("GetVersion")]
+        public ApiResult<List<string>> GetVersion(int areaid)
+        {
+            try
+            {
+                var data = _service.GetVersion(areaid);
+                return Json(ResultCode.Success, data);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"GetResult:{e.Message}");
+                return Json<List<string>>(ResultCode.Error, null, "操作失败");
+            }
         }
         /// <summary>
         /// 实时数据

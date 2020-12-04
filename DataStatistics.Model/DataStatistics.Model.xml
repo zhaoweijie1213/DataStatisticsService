@@ -24,6 +24,21 @@
             参数
             </summary>
         </member>
+        <member name="P:DataStatistics.Model.mj_log_other.AreaVersion.id">
+            <summary>
+            编号
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.AreaVersion.areaid">
+            <summary>
+            大厅
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.AreaVersion.version">
+            <summary>
+            版本号
+            </summary>
+        </member>
         <member name="T:DataStatistics.Model.mj_log_other.OverallSituationModel">
             <summary>
             总体情况

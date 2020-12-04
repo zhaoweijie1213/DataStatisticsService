@@ -1,10 +1,14 @@
-﻿using DataStatistics.Service.Quartz.Jobs.Interface;
+﻿using DataStatistics.Model.mj_log_other;
+using DataStatistics.Service.Quartz.Jobs.Interface;
 using DataStatistics.Service.Repositorys;
+using DataStatistics.Service.Services;
+using EasyCaching.Core;
 using Microsoft.Extensions.Logging;
 using Quartz;
 using Quartz.Impl;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace DataStatistics.Service.Quartz.Impl
@@ -15,9 +19,17 @@ namespace DataStatistics.Service.Quartz.Impl
         /// 日志
         /// </summary>
         private readonly ILogger<QuartzManager> _logger;
+        /// <summary>
+        /// 缓存
+        /// </summary>
+        readonly IEasyCachingProviderFactory _factory;
+        readonly ICacheManage _cache;
+
+        private readonly IMJLogOtherRepository _repository;
+        private readonly IMJLog3Repository _mjlog3repository;
         public IScheduler Scheduler { get; set; }
 
-        public QuartzManager(ILogger<QuartzManager> logger, IServiceProvider IocContainer)
+        public QuartzManager(ILogger<QuartzManager> logger, IServiceProvider IocContainer, IEasyCachingProviderFactory factory, IMJLogOtherRepository repository, IMJLog3Repository mjlog3repository, ICacheManage cache)
         {
             _logger = logger;
             var schedulerFactory = new StdSchedulerFactory();
@@ -25,6 +37,10 @@ namespace DataStatistics.Service.Quartz.Impl
             Scheduler = schedulerFactory.GetScheduler().Result;
             Scheduler.JobFactory = iocJobfactory;
             Scheduler.Start().Wait();
+            _factory = factory;
+            _repository = repository;
+            _mjlog3repository = mjlog3repository;
+            _cache = cache;
         }
         /// <summary>
         /// 初始化加载调度任务
@@ -33,6 +49,7 @@ namespace DataStatistics.Service.Quartz.Impl
         {
             try
             {
+                DateTimeOffset time = DateTimeOffset.Now.AddMinutes(5);
                 #region 昨日概况
                 //昨日概况
                 var job = JobBuilder.Create<IDbStatisticsJob>()
@@ -59,7 +76,7 @@ namespace DataStatistics.Service.Quartz.Impl
                     .Build();
                 var trigger1Min = TriggerBuilder.Create()
                     .WithIdentity("Job1Min_Tigger", "Job1MinGroup")
-                    .StartNow().WithCronSchedule("0 0/1 * * * ?").Build();//每分钟触发
+                    .StartAt(time).WithCronSchedule("0 0/1 * * * ?").Build();//每分钟触发
                                                                            //调度器添加任务
                 Scheduler.ScheduleJob(Job1Min, trigger1Min).Wait();
                 #endregion
@@ -70,7 +87,7 @@ namespace DataStatistics.Service.Quartz.Impl
                     .Build();
                 var trigger5Min = TriggerBuilder.Create()
                     .WithIdentity("Job5Min_Tigger", "Job5MinGroup")
-                    .StartNow().WithCronSchedule("0 0/5 * * * ?").Build();//每5分钟触发
+                    .StartAt(time).WithCronSchedule("0 0/5 * * * ?").Build();//每5分钟触发
                                                                           //调度器添加任务
                 Scheduler.ScheduleJob(Job5Min, trigger5Min).Wait();
                 #endregion
@@ -81,7 +98,7 @@ namespace DataStatistics.Service.Quartz.Impl
                    .Build();
                 var trigger10Min = TriggerBuilder.Create()
                     .WithIdentity("Job10Min_Tigger", "Job10MinGroup")
-                    .StartNow().WithCronSchedule("0 0/10 * * * ?").Build();//每10分钟触发
+                    .StartAt(time).WithCronSchedule("0 0/10 * * * ?").Build();//每10分钟触发
                                                                           //调度器添加任务
                 Scheduler.ScheduleJob(Job10Min, trigger10Min).Wait();
                 #endregion
@@ -92,20 +109,20 @@ namespace DataStatistics.Service.Quartz.Impl
                     .Build();
                 var trigger1Hour = TriggerBuilder.Create()
                     .WithIdentity("Job1Hour_Tigger", "Job1HourGroup")
-                    .StartNow().WithCronSchedule("0 0 0/1 * * ? *").Build();//每小时触发
+                    .StartAt(time).WithCronSchedule("0 0 0/1 * * ? *").Build();//每小时触发
                                                                            //调度器添加任务
                 Scheduler.ScheduleJob(Job1Hour, trigger1Hour).Wait();
                 #endregion
 
                 #region redis过期数据
-                var JobRidesData = JobBuilder.Create<IRidesDataJob>()
-                      .WithIdentity("JobRidesData", "JobRidesDataGroup")
-                      .Build();
-                var triggerRidesData = TriggerBuilder.Create()
-                    .WithIdentity("JobRidesData_Tigger", "JobRidesDataGroup")
-                    .StartNow().WithCronSchedule("0 0/20 * * * ?").Build();//每20触发
-                                                                           //调度器添加任务
-                Scheduler.ScheduleJob(JobRidesData, triggerRidesData).Wait();
+                //var JobRidesData = JobBuilder.Create<IRidesDataJob>()
+                //      .WithIdentity("JobRidesData", "JobRidesDataGroup")
+                //      .Build();
+                //var triggerRidesData = TriggerBuilder.Create()
+                //    .WithIdentity("JobRidesData_Tigger", "JobRidesDataGroup")
+                //    .StartNow().WithCronSchedule("0 0/20 * * * ?").Build();//每20触发
+                //                                                           //调度器添加任务
+                //Scheduler.ScheduleJob(JobRidesData, triggerRidesData).Wait();
                 #endregion
                 _logger.LogInformation("LoadScheduleJob:初始化加载任务成功");
             }

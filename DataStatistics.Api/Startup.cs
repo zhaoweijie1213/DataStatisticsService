@@ -52,8 +52,10 @@ namespace DataStatistics.Api
             services.AddTransient<IDataGroupBy10MinJob, DataGroupBy10MinJob>();
             services.AddTransient<IDataGroupBy1HourJob, DataGroupBy1HourJob>();
             services.AddTransient<IRidesDataJob, RidesDataJob>();
+            //数据加载服务
+            services.AddTransient<ILoadDataService, LoadDataService>();
             //
-            services.AddScoped<ICacheManage, CacheManage>();
+            services.AddSingleton<ICacheManage, CacheManage>();
             services.AddScoped<IDataService, DataService>();
             //调度器
             services.AddSingleton<IQuartzManager, QuartzManager>();
@@ -61,6 +63,11 @@ namespace DataStatistics.Api
             {
                 var log = option.GetServices<ILogger<MJLogOtherRepository>>();
                 return new MJLogOtherRepository(log.FirstOrDefault(), Configuration.GetConnectionString("mj_log_other_mysql"));
+            });       
+            services.AddSingleton<IMJLog3Repository>(option =>
+            {
+                var log = option.GetServices<ILogger<MJLog3Repository>>();
+                return new MJLog3Repository(log.FirstOrDefault(), Configuration.GetConnectionString("mj_log3_mysql"));
             });
             services.AddScoped<IDataProcessing, DataProcessing>();
             services.AddSwaggerGen(c => {
@@ -150,6 +157,8 @@ namespace DataStatistics.Api
             #region 调度器程序启动
             applicationLifetime.ApplicationStarted.Register(() =>
             {
+                //quartz.LoadVersion();
+                //quartz.LoadThirtyUserAction();
                 quartz.LoadScheduleJob(app.ApplicationServices);
             });
             applicationLifetime.ApplicationStopped.Register(() =>
@@ -162,8 +171,8 @@ namespace DataStatistics.Api
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "DataStatisticsService V1");
             });
 
-
-            app.UseHttpsRedirection();
+            //强制执行https
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 

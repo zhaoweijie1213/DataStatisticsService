@@ -20,6 +20,12 @@ namespace DataStatistics.Service.Services
         /// <returns></returns>
         DaysDataModel ThirtyDaysData(int areaid, int type, DateTime time);
         /// <summary>
+        /// 获取版本号
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <returns></returns>
+        List<string> GetVersion(int areaid);
+        /// <summary>
         /// 实时数据
         /// </summary>
         /// <param name="areaid"></param>

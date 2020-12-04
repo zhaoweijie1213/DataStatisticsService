@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DataStatistics.Service.Quartz;
+using DataStatistics.Service.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -13,7 +15,39 @@ namespace DataStatistics.Api
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            
+            var host=CreateHostBuilder(args).Build();
+            var service = host.Services.GetService(typeof(ILoadDataService)) as ILoadDataService;
+             Task.Run(()=> {
+                host.Run();
+            });
+            Console.WriteLine("========初始化数据========");
+            Console.WriteLine("========输入help查看命令========");
+            string key = "";
+            var run = true;
+            while (run)
+            {
+                key = Console.ReadLine();
+                switch (key)
+                {
+                    case "help":
+                        Console.WriteLine("========初始化数据输入load========");
+                        continue;
+                    case "load":
+                        //初始化数据
+                        using (service)
+                        {
+                            service.LoadVersion();
+                            service.LoadThirtyUserAction();
+                        }
+                        continue;
+                    case "exit":
+                        run = false;
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
