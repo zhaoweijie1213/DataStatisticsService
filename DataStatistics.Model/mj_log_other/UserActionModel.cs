@@ -61,13 +61,13 @@ namespace DataStatistics.Model.mj_log_other
         public string version { get; set; }
 
 
-        /// <summary>
-        /// Desc:数据
-        /// Default:
-        /// Nullable:False
-        /// </summary>
+        ///// <summary>
+        ///// Desc:数据
+        ///// Default:
+        ///// Nullable:False
+        ///// </summary>
 
-        public string data { get; set; }
+        //public string data { get; set; }
 
 
         /// <summary>

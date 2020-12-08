@@ -21,6 +21,13 @@ namespace DataStatistics.Service.Repositorys
         /// <returns></returns>
         long Insert<T>(List<T> list);
         /// <summary>
+        /// 删除数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        bool Delete<T>(List<T> list);
+        /// <summary>
         /// 获取概况
         /// </summary>
         /// <param name="areaid"></param>
@@ -76,6 +83,6 @@ namespace DataStatistics.Service.Repositorys
         /// 检查是否存在该版本
         /// </summary>
         /// <returns></returns>
-        int CheckAreaVersion(int areaid, string version);
+        List<AreaVersion> CheckAreaVersion(int areaid, string version);
     }
 }

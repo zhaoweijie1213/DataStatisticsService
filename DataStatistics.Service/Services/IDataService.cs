@@ -68,6 +68,6 @@ namespace DataStatistics.Service.Services
         /// <param name="other"></param>
         /// <param name="otherValue"></param>
         /// <returns></returns>
-        FunnelDataModel GetFunnelData(int areaid, string platForm, int days, DateTime? start, DateTime? end, string other, string otherValue, int type, string version);
+        //FunnelDataModel GetFunnelData(int areaid, string platForm, int days, DateTime? start, DateTime? end, string other, string otherValue, int type, string version);
     }
 }

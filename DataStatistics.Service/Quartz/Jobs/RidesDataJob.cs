@@ -32,13 +32,11 @@ namespace DataStatistics.Service.Quartz.Jobs
                 //30天过期
                 //DateTime time = DateTime.Now.AddDays(-30);
                 //七天过期
-                DateTime time = DateTime.Now.AddDays(-7);
+                //DateTime time = DateTime.Now.AddDays(-7);
                 DateTime time_1 = DateTime.Now.AddHours(-24);
                 var redisProvider = _providerFactory.GetRedisProvider("userAction");
                 //获取所有的key
-                List<string> keys = redisProvider.SearchKeys("*", 0).Where(i => {
-                    return Regex.IsMatch(i, "^\\d+$") || i.StartsWith("r_");
-                }).ToList();
+                List<string> keys = redisProvider.SearchKeys("r_*", 0);
                 //删除超过24小时的元素
                 foreach (var key in keys)
                 {

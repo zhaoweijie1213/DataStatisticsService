@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DataStatistics.Service.Services
 {
-    public interface ILoadDataService: IDisposable
+    public interface ILoadDataService:IDisposable
     {
         /// <summary>
         /// 加载版本号 

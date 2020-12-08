@@ -121,13 +121,6 @@
             Nullable:False
             </summary>
         </member>
-        <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.data">
-            <summary>
-            Desc:数据
-            Default:
-            Nullable:False
-            </summary>
-        </member>
         <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.packageChannel">
             <summary>
             Desc:包渠道

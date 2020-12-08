@@ -6,7 +6,7 @@ using System.Text;
 
 namespace DataStatistics.Service.Services
 {
-    public interface ICacheManage
+    public interface ICacheManage: IDisposable
     {
         /// <summary>
         /// redis
@@ -33,5 +33,6 @@ namespace DataStatistics.Service.Services
         /// <param name="end">结束时间</param>
         /// <returns></returns>
         bool Rpush(int key, List<UserActionModel> list, DateTime start, DateTime end);
+
     }
 }

@@ -28,17 +28,17 @@ namespace DataStatistics.Service.Services.Common
                                     Active=new plat()
                                     {
                                          All=data.Where(i=>i.uid!=0).GroupBy(i=>i.uid).Count(),
-                                         Android=data.Where(i=>i.uid!=0&&i.platForm==PlatFromEnum.Android.GetName()).GroupBy(i=>i.uid).Count(),
-                                         IOS=data.Where(i=>i.uid!=0&&i.platForm==PlatFromEnum.IOS.GetName()).GroupBy(i=>i.uid).Count(),
-                                         Windows=data.Where(i=>i.uid!=0&&i.platForm==PlatFromEnum.Windows.GetName()).GroupBy(i=>i.uid).Count()
+                                         Android=data.Where(i=>i.uid!=0&&i.platForm.ToLower()==PlatFromEnum.Android.GetName().ToLower()).GroupBy(i=>i.uid).Count(),
+                                         IOS=data.Where(i=>i.uid!=0&&i.platForm.ToLower()==PlatFromEnum.IOS.GetName().ToLower()).GroupBy(i=>i.uid).Count(),
+                                         Windows=data.Where(i=>i.uid!=0&&i.platForm.ToLower()==PlatFromEnum.Windows.GetName().ToLower()).GroupBy(i=>i.uid).Count()
                                     },
                                      //注册用户
                                     Register=new plat()
                                     {
                                         All=data.Where(i=>i.uid==0).Count(),
-                                        Android=data.Where(i=>i.uid==0&&i.platForm==PlatFromEnum.Android.GetName()).Count(),
-                                        IOS=data.Where(i=>i.uid==0&&i.platForm==PlatFromEnum.IOS.GetName()).Count(),
-                                        Windows=data.Where(i=>i.uid==0&&i.platForm==PlatFromEnum.Windows.GetName()).Count(),
+                                        Android=data.Where(i=>i.uid==0&&i.platForm.ToLower()==PlatFromEnum.Android.GetName().ToLower()).Count(),
+                                        IOS=data.Where(i=>i.uid==0&&i.platForm.ToLower()==PlatFromEnum.IOS.GetName().ToLower()).Count(),
+                                        Windows=data.Where(i=>i.uid==0&&i.platForm.ToLower()==PlatFromEnum.Windows.GetName().ToLower()).Count(),
                                     },
                                     dateTime=time
                                 }

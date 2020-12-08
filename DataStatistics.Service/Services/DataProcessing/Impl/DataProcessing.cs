@@ -1,4 +1,5 @@
 ﻿using DataStatistics.Model.mj_log_other;
+using DataStatistics.Service.Enums;
 using DataStatistics.Service.Repositorys;
 using DataStatistics.Service.Services.DataProcessing;
 using DotNetCore.CAP;
@@ -42,60 +43,69 @@ namespace DataStatistics.Service.Services.DataProcessingl.Impl
                 {
                     model
                 };
-                _logger.LogInformation($"SubscribeWithnoController:收到数据向Redis添加{model}");
+                _logger.LogInformation($"SubscribeWithnoController:收到数据向Redis添加:{model.areaid}大厅,{model.type}类型,{model.platForm}");
                 //向rides list添加元素
-                DateTime time = DateTime.Now;
+                DateTime time = model.date;
                 string ktime = "";
                 if (time.Minute>0)
                 {
-                    ktime = DateTime.Now.AddHours(1).ToString("yyyyMMddHH");
+                    ktime = time.AddHours(1).ToString("yyyyMMddHH");
                 }
                 else
                 {
-                    ktime = DateTime.Now.ToString("yyyyMMddHH");
+                    ktime = time.ToString("yyyyMMddHH");
                 } 
                 _cache._redisProvider.RPush($"{model.areaid}_t{ktime}", list);
+                Random rand = new Random();
+                int second = (int)KeyExpireTime.realData + rand.Next(5,10);
+                _cache._redisProvider.KeyExpire($"{model.areaid}_t{ktime}", second);
                 //大厅参数
-                string config = model.data;
-                JObject jo = JsonConvert.DeserializeObject<JObject>(config);
-                List<string> keys = new List<string>();
-                string configKeys;
-                foreach (var item in jo)
-                {
-                    keys.Add(item.Key);
-                }
-                configKeys = string.Join(",", keys);
-                var areaParams = _repository.GetAreaParams(model.areaid, model.type);
-                if (areaParams != null)
-                {
+                //string config = model.data;
+                //JObject jo = JsonConvert.DeserializeObject<JObject>(config);
+                //List<string> keys = new List<string>();
+                //string configKeys;
+                //foreach (var item in jo)
+                //{
+                //    keys.Add(item.Key);
+                //}
+                //configKeys = string.Join(",", keys);
+                //var areaParams = _repository.GetAreaParams(model.areaid, model.type);
+                //if (areaParams != null)
+                //{
 
-                    if (configKeys.Equals(areaParams.configKeys))
-                    {
-                        return;
-                    }
-                    var akeys = areaParams.configKeys.Split(',');
-                    keys.Concat(akeys).ToList().Distinct();
-                    areaParams.configKeys = string.Join(",", keys);
-                    _repository.UpdateAreaParams(areaParams);
-                }
-                else
-                {
-                    _repository.Insert(new List<AreaParamsModel>() {
-                     new AreaParamsModel()
-                     {
-                        areaid=model.areaid,
-                        configKeys=configKeys,
-                        type=model.type
-                     }
-                    });
-                }
+                //    if (configKeys.Equals(areaParams.configKeys))
+                //    {
+                //        return;
+                //    }
+                //    var akeys = areaParams.configKeys.Split(',');
+                //    keys.Concat(akeys).ToList().Distinct();
+                //    areaParams.configKeys = string.Join(",", keys);
+                //    _repository.UpdateAreaParams(areaParams);
+                //}
+                //else
+                //{
+                //    _repository.Insert(new List<AreaParamsModel>() {
+                //     new AreaParamsModel()
+                //     {
+                //        areaid=model.areaid,
+                //        configKeys=configKeys,
+                //        type=model.type
+                //     }
+                //    });
+                //}
                 #region 检查版本号
                 //_logger.LogInformation($"SubscribeWithnoController:检查版本号");
-                var length = _repository.CheckAreaVersion(model.areaid,model.version.Trim());
-                if (length==0)
+                var check = _repository.CheckAreaVersion(model.areaid,model.version.Trim());
+                List<AreaVersion> vs = new List<AreaVersion>() { new AreaVersion { areaid = model.areaid, version = model.version.Trim() } };
+                if (check.Count==0)
                 {
-                    List<AreaVersion> vs = new List<AreaVersion>() { new AreaVersion { areaid = model.areaid, version = model.version.Trim() } };
+                    
                     var res = _repository.Insert(vs);
+                }
+                if (check.Count>1)
+                {
+                    _repository.Delete(check);
+                    _repository.Insert(vs);
                 }
                 #endregion
             }

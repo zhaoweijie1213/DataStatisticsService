@@ -115,20 +115,5 @@
             <param name="version">版本号</param>
             <returns></returns>
         </member>
-        <member name="M:DataStatistics.Api.Controllers.DataStatisticsController.GetFunnelData(System.Int32,System.String,System.Int32,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.String,System.String,System.Int32,System.String)">
-            <summary>
-            漏斗图
-            </summary>
-            <param name="areaid"></param>
-            <param name="platForm"></param>
-            <param name="days"></param>
-            <param name="start"></param>
-            <param name="end"></param>
-            <param name="other"></param>
-            <param name="otherValue"></param>
-            <param name="type"></param>
-            <param name="version"></param>
-            <returns></returns>
-        </member>
     </members>
 </doc>

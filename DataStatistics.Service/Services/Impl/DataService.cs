@@ -275,8 +275,8 @@ namespace DataStatistics.Service.Services.Impl
                         }
                         else
                         {
-                            acount = unitData.Where(i => i.uid != 0 && i.date >= st && i.date < et && i.platForm == platFrom).GroupBy(i => i.uid).Count();
-                            rcount = unitData.Where(i => i.uid == 0 && i.date >= st && i.date < et && i.platForm == platFrom).Count();
+                            acount = unitData.Where(i => i.uid != 0 && i.date >= st && i.date < et && i.platForm.ToLower() == platFrom.ToLower()).GroupBy(i => i.uid).Count();
+                            rcount = unitData.Where(i => i.uid == 0 && i.date >= st && i.date < et && i.platForm.ToLower() == platFrom.ToLower()).Count();
                         }
                         actv.Add(acount);
                         regst.Add(rcount);
@@ -325,8 +325,8 @@ namespace DataStatistics.Service.Services.Impl
                         }
                         else
                         {
-                            acount = unitData.Where(i => i.uid != 0 && i.date >= st && i.date < et && i.platForm == platFrom).GroupBy(i => i.uid).Count();
-                            rcount = unitData.Where(i => i.uid == 0 && i.date >= st && i.date < et && i.platForm == platFrom).Count();
+                            acount = unitData.Where(i => i.uid != 0 && i.date >= st && i.date < et && i.platForm.ToLower() == platFrom.ToLower()).GroupBy(i => i.uid).Count();
+                            rcount = unitData.Where(i => i.uid == 0 && i.date >= st && i.date < et && i.platForm.ToLower() == platFrom.ToLower()).Count();
                         }
                         actv.Add(acount);
                         regst.Add(rcount);
@@ -359,8 +359,8 @@ namespace DataStatistics.Service.Services.Impl
                         }
                         else
                         {
-                            acount = unitData.Where(i => i.uid != 0 && i.date >= st && i.date < et && i.platForm == platFrom).GroupBy(i => i.uid).Count();
-                            rcount = unitData.Where(i => i.uid == 0 && i.date >= st && i.date < et && i.platForm == platFrom).Count();
+                            acount = unitData.Where(i => i.uid != 0 && i.date >= st && i.date < et && i.platForm.ToLower() == platFrom.ToLower()).GroupBy(i => i.uid).Count();
+                            rcount = unitData.Where(i => i.uid == 0 && i.date >= st && i.date < et && i.platForm.ToLower() == platFrom.ToLower()).Count();
                         }
                         actv.Add(acount);
                         regst.Add(rcount);
@@ -420,12 +420,12 @@ namespace DataStatistics.Service.Services.Impl
                         seriesData aseries = new seriesData
                         {
                             name = plat,
-                            value = unitData.Where(i => i.platForm == plat && i.uid != 0).GroupBy(i=>i.uid).Count()
+                            value = unitData.Where(i => i.platForm.ToLower() == plat.ToLower() && i.uid != 0).GroupBy(i=>i.uid).Count()
                         };
                         seriesData rseries = new seriesData
                         {
                             name = plat,
-                            value = unitData.Where(i => i.platForm == plat && i.uid == 0).Count()
+                            value = unitData.Where(i => i.platForm.ToLower() == plat.ToLower() && i.uid == 0).Count()
                         };
                         res.ActiveData.Add(aseries);
                         res.RegisterData.Add(rseries);
@@ -451,101 +451,101 @@ namespace DataStatistics.Service.Services.Impl
         /// <param name="other"></param>
         /// <param name="otherValue"></param>
         /// <returns></returns>
-        public FunnelDataModel GetFunnelData(int areaid, string platForm, int days, DateTime? start, DateTime? end, string other, string otherValue, int type, string version)
-        {
-            try
-            {
-                string contition = $"  and type={type} ";
-                if (!string.IsNullOrEmpty(version))
-                {
-                    contition += $" and version='{version}' ";
-                }
-                if (platForm!=PlatFromEnum.All.GetName())
-                {
-                    contition += $" and platForm='{platForm}' ";
-                }
-                else
-                {
-                    contition = $" and platForm in('IOS', 'Android', 'Windows') ";
-                }
-                FunnelDataModel model = new FunnelDataModel();
-                if (!string.IsNullOrEmpty(otherValue))
-                {
-                    model.lengdData = otherValue.Split(',').ToList();
-                }
-                if (days!=0)
-                {
-                    var st = DateTime.Now.AddDays(-days);
-                    var et = DateTime.Now;
-                    contition += $"and date between '{st}' and '{et}' ";
-                }
-                else
-                {
-                    contition += $"and date between '{start}' and '{end}' ";
-                }
-                //数据
-                var unitData = _repository.GetActionData(areaid, contition);
-                List<dataItem> aitem = new List<dataItem>();
-                List<dataItem> ritem = new List<dataItem>();
-                double asum = 0;
-                double rsum = 0;
-                for (int x = 0; x < model.lengdData.Count; x++)
-                {
-                    if (x==0)
-                    {
-                        asum = unitData.Where(i => i.uid != 0).Where(i =>
-                        {
-                            JObject jo = JsonConvert.DeserializeObject<JObject>(i.data);
-                            bool res = jo.Value<string>(other) == model.lengdData[x];
-                            return res;
-                        }).GroupBy(i => i.uid).ToList().Count;
-                        rsum = unitData.Where(i => i.uid == 0).Where(i =>
-                        {
-                            JObject jo = JsonConvert.DeserializeObject<JObject>(i.data);
-                            bool res = jo.Value<string>(other) == model.lengdData[x];
-                            return res;
-                        }).ToList().Count;
-                        aitem.Add(new dataItem() { value = 100, name = model.lengdData[x] });
-                        ritem.Add(new dataItem() { value = 100, name = model.lengdData[x] });
-                    }
-                    else
-                    {
-                        if (asum==0)
-                        {
-                            asum = 1;
-                        }
-                        if (rsum==0)
-                        {
-                            rsum = 1;
-                        }
-                        var acount = unitData.Where(i => i.uid != 0).Where(i =>
-                        {
-                            JObject jo = JsonConvert.DeserializeObject<JObject>(i.data);
-                            bool res = jo.Value<string>(other) == model.lengdData[x];
-                            return res;
-                        }).GroupBy(i => i.uid).ToList().Count;
-                        //model.activeData.Add(acount);
-                        aitem.Add(new dataItem() { value = (int)((acount / asum)*100), name = model.lengdData[x] });
-                        var rcount = unitData.Where(i => i.uid == 0).Where(i =>
-                        {
-                            JObject jo = JsonConvert.DeserializeObject<JObject>(i.data);
-                            bool res = jo.Value<string>(other) == model.lengdData[x];
-                            return res;
-                        }).ToList().Count;
+        //public FunnelDataModel GetFunnelData(int areaid, string platForm, int days, DateTime? start, DateTime? end, string other, string otherValue, int type, string version)
+        //{
+        //    try
+        //    {
+        //        string contition = $"  and type={type} ";
+        //        if (!string.IsNullOrEmpty(version))
+        //        {
+        //            contition += $" and version='{version}' ";
+        //        }
+        //        if (platForm!=PlatFromEnum.All.GetName())
+        //        {
+        //            contition += $" and platForm='{platForm}' ";
+        //        }
+        //        else
+        //        {
+        //            contition = $" and platForm in('IOS', 'Android', 'Windows') ";
+        //        }
+        //        FunnelDataModel model = new FunnelDataModel();
+        //        if (!string.IsNullOrEmpty(otherValue))
+        //        {
+        //            model.lengdData = otherValue.Split(',').ToList();
+        //        }
+        //        if (days!=0)
+        //        {
+        //            var st = DateTime.Now.AddDays(-days);
+        //            var et = DateTime.Now;
+        //            contition += $"and date between '{st}' and '{et}' ";
+        //        }
+        //        else
+        //        {
+        //            contition += $"and date between '{start}' and '{end}' ";
+        //        }
+        //        //数据
+        //        var unitData = _repository.GetActionData(areaid, contition);
+        //        List<dataItem> aitem = new List<dataItem>();
+        //        List<dataItem> ritem = new List<dataItem>();
+        //        double asum = 0;
+        //        double rsum = 0;
+        //        for (int x = 0; x < model.lengdData.Count; x++)
+        //        {
+        //            if (x==0)
+        //            {
+        //                asum = unitData.Where(i => i.uid != 0).Where(i =>
+        //                {
+        //                    JObject jo = JsonConvert.DeserializeObject<JObject>(i.data);
+        //                    bool res = jo.Value<string>(other) == model.lengdData[x];
+        //                    return res;
+        //                }).GroupBy(i => i.uid).ToList().Count;
+        //                rsum = unitData.Where(i => i.uid == 0).Where(i =>
+        //                {
+        //                    JObject jo = JsonConvert.DeserializeObject<JObject>(i.data);
+        //                    bool res = jo.Value<string>(other) == model.lengdData[x];
+        //                    return res;
+        //                }).ToList().Count;
+        //                aitem.Add(new dataItem() { value = 100, name = model.lengdData[x] });
+        //                ritem.Add(new dataItem() { value = 100, name = model.lengdData[x] });
+        //            }
+        //            else
+        //            {
+        //                if (asum==0)
+        //                {
+        //                    asum = 1;
+        //                }
+        //                if (rsum==0)
+        //                {
+        //                    rsum = 1;
+        //                }
+        //                var acount = unitData.Where(i => i.uid != 0).Where(i =>
+        //                {
+        //                    JObject jo = JsonConvert.DeserializeObject<JObject>(i.data);
+        //                    bool res = jo.Value<string>(other) == model.lengdData[x];
+        //                    return res;
+        //                }).GroupBy(i => i.uid).ToList().Count;
+        //                //model.activeData.Add(acount);
+        //                aitem.Add(new dataItem() { value = (int)((acount / asum)*100), name = model.lengdData[x] });
+        //                var rcount = unitData.Where(i => i.uid == 0).Where(i =>
+        //                {
+        //                    JObject jo = JsonConvert.DeserializeObject<JObject>(i.data);
+        //                    bool res = jo.Value<string>(other) == model.lengdData[x];
+        //                    return res;
+        //                }).ToList().Count;
 
-                        ritem.Add(new dataItem() { value = (int)((rcount/rsum)*100), name = model.lengdData[x] });
-                    }
-                }
+        //                ritem.Add(new dataItem() { value = (int)((rcount/rsum)*100), name = model.lengdData[x] });
+        //            }
+        //        }
 
-                model.activeData = aitem;
-                model.registerData = ritem;
-                return model;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"GetFunnelData:{e.Message}");
-                throw;
-            }
-        }
+        //        model.activeData = aitem;
+        //        model.registerData = ritem;
+        //        return model;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        _logger.LogError($"GetFunnelData:{e.Message}");
+        //        throw;
+        //    }
+        //}
     }
 }

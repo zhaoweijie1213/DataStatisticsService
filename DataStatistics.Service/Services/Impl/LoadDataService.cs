@@ -73,9 +73,9 @@ namespace DataStatistics.Service.Services.Impl
             {
                 _logger.LogInformation("----加载30天数据----");
                 List<int> gameids = _mjlog3repository.GetGameid();
-                var end = DateTime.Now.Date;
+                var end = DateTime.Now.Date.AddDays(-3);
                 //var start = DateTime.Now.Date.AddDays(-30);
-                var start = DateTime.Now.Date.AddDays(-7);
+                var start = DateTime.Now.Date.AddDays(-10);
                 //var data = _repository.GetUserActions(start, end);
 
                 var redisProvider = _factory.GetRedisProvider("userAction");
@@ -87,11 +87,13 @@ namespace DataStatistics.Service.Services.Impl
                     //var sdata = data.Where(i => i.areaid == areaid).ToList();
                     if (sdata.Count > 0)
                     {
-                        var count = _cache.Rpush(areaid, sdata, start, end);
-                        _logger.LogInformation($"----加载{areaid}大厅数据成功,共{sdata.Count}条----");
+                        using (var _c=_cache)
+                        {
+                            var count = _cache.Rpush(areaid, sdata, start, end);
+                            _logger.LogInformation($"----加载{areaid}大厅数据成功,共{sdata.Count}条----");
+                        }
                     }
                 }
-
                 _logger.LogInformation("----加载数据完成----");
             }
             catch (Exception e)

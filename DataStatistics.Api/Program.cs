@@ -35,11 +35,15 @@ namespace DataStatistics.Api
                         continue;
                     case "load":
                         //初始化数据
-                        using (service)
+                        //using (service)
+                        //{
+                        using (var _s=service)
                         {
-                            service.LoadVersion();
-                            service.LoadThirtyUserAction();
+                            _s.LoadVersion();
+                            _s.LoadThirtyUserAction();
                         }
+                        //service.Dispose();
+                        //}
                         continue;
                     case "exit":
                         run = false;

@@ -59,17 +59,24 @@ namespace DataStatistics.Service.Services.Impl
                 var res = _memoryCache.TryGetValue(areaid, out data);
                 if (res)
                 {
-                    return data;
+                    return data.ToList();
                 }
                 else
                 {
-                    int hourCount = (end - start).Hours;
+                    int hourCount = (int)((end - start).TotalHours);
                     for (int i = 1; i <= hourCount; i++)
                     {
                         var ktime = start.AddHours(i).ToString("yyyyMMddHH");
                         long length = _redisProvider.LLen($"{areaid}_t{ktime}");
                         var idate = _redisProvider.LRange<UserActionModel>($"{areaid}_t{ktime}", 0, length);
-                        data.Concat(idate);
+                        if (i==1)
+                        {
+                            data = idate;
+                        }
+                        else
+                        {
+                            data.AddRange(idate);
+                        }
                     }
                     //var end = DateTime.Now;
                     //var start = DateTime.Now.Date.AddDays(-30);
@@ -111,7 +118,7 @@ namespace DataStatistics.Service.Services.Impl
 
 
         /// <summary>
-        /// 插入redis
+        /// data插入redis
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
@@ -129,13 +136,13 @@ namespace DataStatistics.Service.Services.Impl
                 {
                     var kstart = start.AddHours(i-1);
                     var kend = start.AddHours(i);
-                    var tkey = kstart.ToString("yyyyMMddHH");
+                    var tkey = kend.ToString("yyyyMMddHH");
                     _redisProvider.KeyDel($"{key}_t{tkey}");
-                    var data = list.Where(i => i.date >= kstart && i.date <= kend).ToList();
+                    var data = list.Where(i => i.date > kstart && i.date <= kend).ToList();
                     if (data.Count>0)
                     {
                         _redisProvider.RPush($"{key}_t{tkey}",data );
-                        _redisProvider.KeyExpire($"{key}_t{tkey}", (int)KeyExpireTime.unitData);
+                        _redisProvider.KeyExpire($"{key}_t{tkey}", i*(int)KeyExpireTime.unitData);
                     }
                 }
                 return true;
@@ -145,6 +152,12 @@ namespace DataStatistics.Service.Services.Impl
                 _logger.LogError($"Rpush:{e.Message}");
                 return false;
             }   
+        }
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+           
         }
     }
 }

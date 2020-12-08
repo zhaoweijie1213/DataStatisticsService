@@ -92,6 +92,29 @@ namespace DataStatistics.Service.Repositorys.Impl
                 throw;
             }
         }
+
+        /// <summary>
+        /// 删除数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public bool Delete<T>(List<T> list)
+        {
+            try
+            {
+                using (_db)
+                {
+                    bool res = _db.Delete(list);
+                    return res;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Delete:{e.Message}");
+                throw;
+            }
+        }
         /// <summary>
         /// 修改大厅参数
         /// </summary>
@@ -240,22 +263,22 @@ namespace DataStatistics.Service.Repositorys.Impl
         /// 检查是否存在该版本
         /// </summary>
         /// <returns></returns>
-        public int CheckAreaVersion(int areaid, string version)
+        public List<AreaVersion> CheckAreaVersion(int areaid, string version)
         {
             try
             {
                 using (_db)
                 {
-                    string sql = $"select areaid,version from log_area_version where areaid={areaid} and version='{version}'";
+                    string sql = $"select id,areaid,version from log_area_version where areaid={areaid} and version='{version}'";
                     var res = _db.Query<AreaVersion>(sql).ToList();
-                    return res.Count();
+                    return res;
                 }
                 
             }
             catch (Exception e)
             {
                 _logger.LogError($"CheckAreaVersion:{e.Message}");
-                return 0;
+                return null;
             }
         }
         /// <summary>

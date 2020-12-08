@@ -55,21 +55,21 @@ namespace DataStatistics.Api
             //数据加载服务
             services.AddTransient<ILoadDataService, LoadDataService>();
             //
-            services.AddSingleton<ICacheManage, CacheManage>();
-            services.AddScoped<IDataService, DataService>();
+            services.AddTransient<ICacheManage, CacheManage>();
+            services.AddTransient<IDataService, DataService>();
             //调度器
             services.AddSingleton<IQuartzManager, QuartzManager>();
-            services.AddSingleton<IMJLogOtherRepository>(option =>
+            services.AddTransient<IMJLogOtherRepository>(option =>
             {
                 var log = option.GetServices<ILogger<MJLogOtherRepository>>();
                 return new MJLogOtherRepository(log.FirstOrDefault(), Configuration.GetConnectionString("mj_log_other_mysql"));
             });       
-            services.AddSingleton<IMJLog3Repository>(option =>
+            services.AddTransient<IMJLog3Repository>(option =>
             {
                 var log = option.GetServices<ILogger<MJLog3Repository>>();
                 return new MJLog3Repository(log.FirstOrDefault(), Configuration.GetConnectionString("mj_log3_mysql"));
             });
-            services.AddScoped<IDataProcessing, DataProcessing>();
+            services.AddTransient<IDataProcessing, DataProcessing>();
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
