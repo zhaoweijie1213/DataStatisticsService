@@ -73,9 +73,9 @@ namespace DataStatistics.Service.Services.Impl
             {
                 _logger.LogInformation("----加载30天数据----");
                 List<int> gameids = _mjlog3repository.GetGameid();
-                var end = DateTime.Now.Date.AddDays(-3);
+                var end = DateTime.Now.Date.AddDays(0);
                 //var start = DateTime.Now.Date.AddDays(-30);
-                var start = DateTime.Now.Date.AddDays(-10);
+                var start = DateTime.Now.Date.AddDays(-7);
                 //var data = _repository.GetUserActions(start, end);
 
                 var redisProvider = _factory.GetRedisProvider("userAction");

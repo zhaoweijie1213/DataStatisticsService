@@ -121,13 +121,6 @@
             Nullable:False
             </summary>
         </member>
-        <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.packageChannel">
-            <summary>
-            Desc:包渠道
-            Default:
-            Nullable:False
-            </summary>
-        </member>
         <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.platForm">
             <summary>
             Desc:平台
@@ -135,11 +128,114 @@
             Nullable:False
             </summary>
         </member>
-        <member name="P:DataStatistics.Model.mj_log_other.UserActionModel.device">
+        <member name="P:DataStatistics.Model.mj_log_other.ReciveUserActionModel.id">
+            <summary>
+            Desc:
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.ReciveUserActionModel.type">
+            <summary>
+            Desc:类型
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.ReciveUserActionModel.date">
+            <summary>
+            Desc:时间
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.ReciveUserActionModel.areaid">
+            <summary>
+            Desc:
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.ReciveUserActionModel.uid">
+            <summary>
+            Desc:
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.ReciveUserActionModel.version">
+            <summary>
+            Desc:版本
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.ReciveUserActionModel.data">
+            <summary>
+            Desc:数据
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.ReciveUserActionModel.packageChannel">
+            <summary>
+            Desc:包渠道
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.ReciveUserActionModel.platForm">
+            <summary>
+            Desc:平台
+            Default:
+            Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.ReciveUserActionModel.device">
             <summary>
             Desc:设备
             Default:
             Nullable:False
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionStatisticsModel.id">
+            <summary>
+            编号
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionStatisticsModel.areaid">
+            <summary>
+            大厅id
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionStatisticsModel.type">
+            <summary>
+            类型
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionStatisticsModel.version">
+            <summary>
+            版本号
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionStatisticsModel.platForm">
+            <summary>
+            平台
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionStatisticsModel.uuid">
+            <summary>
+            用户编码
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionStatisticsModel.uid">
+            <summary>
+            用户id
+            </summary>
+        </member>
+        <member name="P:DataStatistics.Model.mj_log_other.UserActionStatisticsModel.added">
+            <summary>
+            录入时间
             </summary>
         </member>
         <member name="P:DataStatistics.Model.ViewModel.DaysDataModel.xAxis">

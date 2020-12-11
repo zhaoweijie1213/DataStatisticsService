@@ -62,11 +62,8 @@ namespace DataStatistics.Service.Quartz.Impl
                 var trigger = TriggerBuilder.Create()
                     .WithIdentity("DbStatisticsJob_Trigger", "DbStatisticsGroup")
                     .StartNow()
-                 //   .WithSimpleSchedule(x => x
-                 //.WithIntervalInSeconds(15).RepeatForever())
-                 .WithCronSchedule("0 0 0 1/1 * ?")//每天00:00:00触发 0 0 0 1/1 * ?
-                                                   //.WithCronSchedule("0 0/1 * * * ?")
-                 .Build();
+                    .WithCronSchedule("0 5 0 1/1 * ?")//每天00:05:00触发 0 0 0 1/1 * ?
+                    .Build();
                 //调度器添加任务
                 Scheduler.ScheduleJob(job, trigger).Wait();
                 #endregion
@@ -77,7 +74,7 @@ namespace DataStatistics.Service.Quartz.Impl
                     .Build();
                 var trigger1Min = TriggerBuilder.Create()
                     .WithIdentity("Job1Min_Tigger", "Job1MinGroup")
-                    .StartNow().WithCronSchedule("0 0/1 * * * ?").Build();//每分钟触发
+                    .StartNow().WithCronSchedule("5 0/1 * * * ?").Build();//每分钟触发
                                                                            //调度器添加任务
                 Scheduler.ScheduleJob(Job1Min, trigger1Min).Wait();
                 #endregion
@@ -88,7 +85,7 @@ namespace DataStatistics.Service.Quartz.Impl
                     .Build();
                 var trigger5Min = TriggerBuilder.Create()
                     .WithIdentity("Job5Min_Tigger", "Job5MinGroup")
-                    .StartNow().WithCronSchedule("0 0/5 * * * ?").Build();//每5分钟触发
+                    .StartNow().WithCronSchedule("5 0/5 * * * ?").Build();//每5分钟触发
                                                                           //调度器添加任务
                 Scheduler.ScheduleJob(Job5Min, trigger5Min).Wait();
                 #endregion
@@ -99,7 +96,7 @@ namespace DataStatistics.Service.Quartz.Impl
                    .Build();
                 var trigger10Min = TriggerBuilder.Create()
                     .WithIdentity("Job10Min_Tigger", "Job10MinGroup")
-                    .StartNow().WithCronSchedule("0 0/10 * * * ?").Build();//每10分钟触发
+                    .StartNow().WithCronSchedule("5 0/10 * * * ?").Build();//每10分钟触发
                                                                           //调度器添加任务
                 Scheduler.ScheduleJob(Job10Min, trigger10Min).Wait();
                 #endregion
@@ -110,7 +107,7 @@ namespace DataStatistics.Service.Quartz.Impl
                     .Build();
                 var trigger1Hour = TriggerBuilder.Create()
                     .WithIdentity("Job1Hour_Tigger", "Job1HourGroup")
-                    .StartNow().WithCronSchedule("0 0 0/1 * * ? *").Build();//每小时触发
+                    .StartNow().WithCronSchedule("0 5 0/1 * * ? *").Build();//每小时过五分时触发
                                                                            //调度器添加任务
                 Scheduler.ScheduleJob(Job1Hour, trigger1Hour).Wait();
                 #endregion

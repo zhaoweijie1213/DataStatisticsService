@@ -3,6 +3,7 @@ using DataStatistics.Model.ViewModel;
 using DataStatistics.Service.Quartz.Jobs.Interface;
 using EasyCaching.Core;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Quartz;
 using System;
 using System.Collections.Generic;
@@ -47,19 +48,9 @@ namespace DataStatistics.Service.Quartz.Jobs
                         foreach (var item in data)
                         {
                             redisProvider.LRem(key, 0, item);
-                            _logger.LogInformation($"实时数据过期：{item}");
+                            _logger.LogInformation($"实时数据过期：key:{JsonConvert.SerializeObject(item)}");
                         }
                     }
-                    //else
-                    //{
-                    //    var length = redisProvider.LLen(key);
-                    //    var data = redisProvider.LRange<UserActionModel>(key, 0, length).Where(i => i.date <= time).ToList();
-                    //    foreach (var item in data)
-                    //    {
-                    //        redisProvider.LRem(key, 0, item);
-                    //        _logger.LogInformation($"过期：{item}");
-                    //    }
-                    //}
                 }
             }
             catch (Exception e)

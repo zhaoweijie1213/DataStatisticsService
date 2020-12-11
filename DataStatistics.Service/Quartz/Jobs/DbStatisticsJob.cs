@@ -52,23 +52,24 @@ namespace DataStatistics.Service.Quartz.Impl
                 List<int> gameids = _mjlog3repository.GetGameid();
                 foreach (var item in gameids)
                 {
-                    string timekey = endtTime.ToString("yyyyMMdd");
+                    //string timekey = endtTime.ToString("yyyyMMdd");
                     int areaid = item * 100;
-                    List<string> keys = redisProvider.SearchKeys($"{areaid}_t{timekey}*", 0);
-                    List<UserActionModel> data = new List<UserActionModel>();
-                    for (int i = 0; i < keys.Count; i++)
-                    {
-                        var length = redisProvider.LLen(keys[i]);
-                        var udata = redisProvider.LRange<UserActionModel>(keys[i], 0, length);
-                        if (i==0)
-                        {
-                            data = udata;
-                        }
-                        else
-                        {
-                            data.AddRange(udata);
-                        }
-                    }
+                    //List<string> keys = redisProvider.SearchKeys($"{areaid}_t{timekey}*", 0);
+                    List<UserActionStatisticsModel> data = new List<UserActionStatisticsModel>();
+                    data = _repository.QueryUserActStat(areaid, startTime, endtTime);
+                    //for (int i = 0; i < keys.Count; i++)
+                    //{
+                    //    var length = redisProvider.LLen(keys[i]);
+                    //    var udata = redisProvider.LRange<UserActionModel>(keys[i], 0, length);
+                    //    if (i==0)
+                    //    {
+                    //        data = udata;
+                    //    }
+                    //    else
+                    //    {
+                    //        data.AddRange(udata);
+                    //    }
+                    //}
                     //foreach (var key in keys)
                     //{
                     //    var length = redisProvider.LLen(key);
@@ -78,14 +79,17 @@ namespace DataStatistics.Service.Quartz.Impl
                     List<int> dataType = PlatFromEnumExt.GetEnumAllValue<DataType>();
                     foreach (var type in dataType)
                     {
-                        var udata = data.Where(i => i.type == type).ToList();
+                        var udata = data.Where(i => i.type == type).Where(i => i.added >= startTime && i.added < endtTime).ToList();
                         //所有版本
                         var all = GetList(areaid, type, udata, startTime);
+                        bool s = _repository.DeleteYeatodayData(areaid,startTime);
                         var ares = _repository.Insert(all);
                         _logger.LogInformation($"更新:{ares}条数据,类型:{type},时间:{DateTime.Now:yyyy-MMM-dd HH:mm:ss:ffff}");
                     }
                 }
-            
+
+                var IsSucces=_repository.DeleteUserActStat(endtTime);
+                _logger.LogDebug($"清除昨日行为数据分析数据:{IsSucces},时间:{DateTime.Now:yyyy-MMM-dd HH:mm:ss:ffff}");
                 #endregion
 
             }
@@ -104,7 +108,7 @@ namespace DataStatistics.Service.Quartz.Impl
         /// <param name="vdata"></param>
         /// <param name="startTime"></param>
         /// <returns></returns>
-        public List<OverallSituationModel> GetList(int key,int type,List<UserActionModel> vdata,DateTime startTime)
+        public List<OverallSituationModel> GetList(int key,int type,List<UserActionStatisticsModel> vdata,DateTime startTime)
         {
             List<OverallSituationModel> list = new List<OverallSituationModel>();
             //all
@@ -112,7 +116,7 @@ namespace DataStatistics.Service.Quartz.Impl
             {
                 areaid = key,
                 activeUsers = vdata.Where(i => i.uid != 0).GroupBy(i=>i.uid).Count(),
-                registeredUsers = vdata.Where(i => i.uid == 0).Count(),
+                registeredUsers = vdata.Where(i => i.uid == 0 && !string.IsNullOrEmpty(i.uuid)).GroupBy(i=>i.uuid).Count(),
                 platForm = PlatFromEnum.All.GetName(),
                 dataTime = startTime,
                 type = type
@@ -122,8 +126,8 @@ namespace DataStatistics.Service.Quartz.Impl
             OverallSituationModel windows = new OverallSituationModel()
             {
                 areaid = key,
-                activeUsers = vdata.Where(i => i.uid != 0 && i.platForm.ToLower() == PlatFromEnum.Windows.GetName().ToLower()).GroupBy(i=>i.uid).Count(),
-                registeredUsers = vdata.Where(i => i.uid == 0 && i.platForm.ToLower() == PlatFromEnum.Windows.GetName().ToLower()).Count(),
+                activeUsers = vdata.Where(i => i.uid != 0 && i.platForm?.ToLower() == PlatFromEnum.Windows.GetName().ToLower()).GroupBy(i=>i.uid).Count(),
+                registeredUsers = vdata.Where(i => i.uid == 0 && i.platForm?.ToLower() == PlatFromEnum.Windows.GetName().ToLower()&&!string.IsNullOrEmpty(i.uuid)).GroupBy(i => i.uuid).Count(),
                 platForm = PlatFromEnum.Windows.GetName(),
                 dataTime = startTime,
                 type=type
@@ -133,8 +137,8 @@ namespace DataStatistics.Service.Quartz.Impl
             OverallSituationModel ios = new OverallSituationModel()
             {
                 areaid = key,
-                activeUsers = vdata.Where(i => i.uid != 0 && i.platForm.ToLower() == PlatFromEnum.IOS.GetName().ToLower()).GroupBy(i => i.uid).Count(),
-                registeredUsers = vdata.Where(i => i.uid == 0 && i.platForm.ToLower() == PlatFromEnum.IOS.GetName().ToLower()).Count(),
+                activeUsers = vdata.Where(i => i.uid != 0 && i.platForm?.ToLower() == PlatFromEnum.IOS.GetName().ToLower()).GroupBy(i => i.uid).Count(),
+                registeredUsers = vdata.Where(i => i.uid == 0 && i.platForm?.ToLower() == PlatFromEnum.IOS.GetName().ToLower() && !string.IsNullOrEmpty(i.uuid)).GroupBy(i => i.uuid).Count(),
                 platForm = PlatFromEnum.IOS.GetName(),
                 dataTime = startTime,
                 type = type
@@ -144,8 +148,8 @@ namespace DataStatistics.Service.Quartz.Impl
             OverallSituationModel android = new OverallSituationModel()
             {
                 areaid = key,
-                activeUsers = vdata.Where(i => i.uid != 0 && i.platForm.ToLower() == PlatFromEnum.Android.GetName().ToLower()).GroupBy(i => i.uid).Count(),
-                registeredUsers = vdata.Where(i => i.uid == 0 && i.platForm.ToLower() == PlatFromEnum.Android.GetName().ToLower()).Count(),
+                activeUsers = vdata.Where(i => i.uid != 0 && i.platForm?.ToLower() == PlatFromEnum.Android.GetName().ToLower()).GroupBy(i => i.uid).Count(),
+                registeredUsers = vdata.Where(i => i.uid == 0 && i.platForm?.ToLower() == PlatFromEnum.Android.GetName().ToLower() && !string.IsNullOrEmpty(i.uuid)).GroupBy(i => i.uuid).Count(),
                 platForm = PlatFromEnum.Android.GetName(),
                 dataTime = startTime,
                 type = type

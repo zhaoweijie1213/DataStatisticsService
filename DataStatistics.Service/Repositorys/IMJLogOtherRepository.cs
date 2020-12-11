@@ -84,5 +84,31 @@ namespace DataStatistics.Service.Repositorys
         /// </summary>
         /// <returns></returns>
         List<AreaVersion> CheckAreaVersion(int areaid, string version);
+        /// <summary>
+        /// 查询当天行为统计
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <param name="type"></param>
+        /// <param name="platForm"></param>
+        /// <param name="uuid"></param>
+        /// <returns></returns>
+        UserActionStatisticsModel QueryByContion(int areaid,int uid, int type, string platForm, string version,string uuid);
+        /// <summary>
+        /// 日行为分析列表
+        /// </summary>
+        /// <returns></returns>
+        List<UserActionStatisticsModel> QueryUserActStat(int areaid, DateTime start, DateTime end);
+        /// <summary>
+        /// 删除日行为分析数据
+        /// </summary>
+        /// <returns></returns>
+        bool DeleteUserActStat(DateTime end);
+        /// <summary>
+        /// 删除概况
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <param name="time"></param>
+        /// <returns></returns>
+        bool DeleteYeatodayData(int areaid, DateTime time);
     }
 }

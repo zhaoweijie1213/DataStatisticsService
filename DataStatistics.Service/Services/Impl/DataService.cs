@@ -403,11 +403,11 @@ namespace DataStatistics.Service.Services.Impl
                 List<UserActionModel> unitData = new List<UserActionModel>();
                 if (string.IsNullOrEmpty(version))
                 {
-                    unitData = _cache.GetRawDataForThirty(areaid.ToString(),start,end).Where(i => i.type == type && i.date >= start && i.date <= end).ToList();
+                    unitData = _cache.GetRawDataForThirty(areaid.ToString(),start,end).ToList().Where(i => i.type == type && i.date >= start && i.date <= end).ToList();
                 }
                 else
                 {
-                    unitData = _cache.GetRawDataForThirty(areaid.ToString(),start,end).Where(i => i.type == type && i.version == version && i.date >= start && i.date <= end).ToList();
+                    unitData = _cache.GetRawDataForThirty(areaid.ToString(),start,end).ToList().Where(i => i.type == type && i.version == version && i.date >= start && i.date <= end).ToList();
                 }
                 Dictionary<int, string> plats=new Dictionary<int, string>();
                 plats = PlatFromEnumExt.GetEnumAllNameAndValue<PlatFromEnum>();
@@ -420,12 +420,12 @@ namespace DataStatistics.Service.Services.Impl
                         seriesData aseries = new seriesData
                         {
                             name = plat,
-                            value = unitData.Where(i => i.platForm.ToLower() == plat.ToLower() && i.uid != 0).GroupBy(i=>i.uid).Count()
+                            value = unitData.Where(i => i.platForm?.ToLower() == plat.ToLower() && i.uid != 0).GroupBy(i=>i.uid).Count()
                         };
                         seriesData rseries = new seriesData
                         {
                             name = plat,
-                            value = unitData.Where(i => i.platForm.ToLower() == plat.ToLower() && i.uid == 0).Count()
+                            value = unitData.Where(i => i.platForm?.ToLower() == plat.ToLower() && i.uid == 0).Count()
                         };
                         res.ActiveData.Add(aseries);
                         res.RegisterData.Add(rseries);

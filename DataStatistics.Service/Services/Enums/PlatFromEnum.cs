@@ -34,7 +34,7 @@ namespace DataStatistics.Service.Enums
     {
         //元数据
         unitData = 3600,
-        //实时数据
+        //实时数据24小时
         realData = 86400
     }
     /// <summary>

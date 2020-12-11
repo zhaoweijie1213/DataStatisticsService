@@ -302,5 +302,108 @@ namespace DataStatistics.Service.Repositorys.Impl
                 return false;
             }
         }
+        /// <summary>
+        /// 查询当天行为统计
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <param name="type"></param>
+        /// <param name="platForm"></param>
+        /// <param name="uuid"></param>
+        /// <returns></returns>
+        public UserActionStatisticsModel QueryByContion(int areaid,int uid,int type,string platForm,string version,string uuid)
+        {
+            UserActionStatisticsModel model = new UserActionStatisticsModel();
+            if (string.IsNullOrEmpty(platForm))
+            {
+                platForm = " ";
+            }
+            if (string.IsNullOrEmpty(version))
+            {
+                version = " ";
+            }
+            string sql = $"select * from log_userActionStatistics where areaid={areaid}  and type={type} and platForm='{platForm}' and version='{version}' and uid={uid} and uuid='{uuid}'";
+            try
+            {
+                using (_db)
+                {
+                    model = _db.QueryFirstOrDefault<UserActionStatisticsModel>(sql);
+                    return model;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"QueryByContion:{e.Message},sql语句:{sql}");
+                return model;
+            }
+        }
+        /// <summary>
+        /// 日行为分析列表
+        /// </summary>
+        /// <returns></returns>
+        public List<UserActionStatisticsModel> QueryUserActStat(int areaid,DateTime start,DateTime end)
+        {
+            List<UserActionStatisticsModel> list = new List<UserActionStatisticsModel>();
+            string sql = $"select id,areaid,type,platForm,uuid,uid,added,version from log_userActionStatistics where areaid={areaid} and added  between '{start}' and  '{end}' ";
+            try
+            {
+                using (_db)
+                {
+                    list = _db.Query<UserActionStatisticsModel>(sql).ToList();
+                    return list;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"QueryUserActStat:{e.Message},sql语句:{sql}");
+                return list;
+            }
+        }
+
+        /// <summary>
+        /// 删除日行为分析数据
+        /// </summary>
+        /// <returns></returns>
+        public bool DeleteUserActStat(DateTime end)
+        {
+            bool res = false;
+            string sql = $"delete from log_userActionStatistics where  added < '{end}' ";
+            try
+            {
+                using (_db)
+                {
+                    var count = _db.Execute(sql);
+                    return count>0;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"DeleteUserActStat:{e.Message},sql语句:{sql}");
+                return res;
+            }
+        }
+        /// <summary>
+        /// 删除概况
+        /// </summary>
+        /// <param name="areaid"></param>
+        /// <param name="time"></param>
+        /// <returns></returns>
+        public  bool DeleteYeatodayData(int areaid,DateTime time)
+        {
+            bool res = false;
+            string sql = $"delete from log_overall_situation where  areaid={areaid} adn dataTime='{time}' ";
+            try
+            {
+                using (_db)
+                {
+                    var count = _db.Execute(sql);
+                    return count > 0;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"DeleteUserActStat:{e.Message},sql语句:{sql}");
+                return res;
+            }
+        }
     }
 }

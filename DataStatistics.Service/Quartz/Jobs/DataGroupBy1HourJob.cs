@@ -60,19 +60,19 @@ namespace DataStatistics.Service.Quartz.Jobs
                     foreach (var type in dataType)
                     {
                         var tdata = all_data.Where(i => i.type == type).ToList();
+                        List<JobRealData> areg = JobDataProcessing.GetDataList(tdata, "", endtTime);
+                        // 60分钟时间粒度
+                        redisProvider.RPush($"r_60_{type}_{key}", areg);
+                        //redisProvider.KeyExpire($"r_60_{type}_{key}", (int)KeyExpireTime.realData);
                         foreach (var v in vList)
                         {
                             var data = tdata.Where(i => i.version == v).ToList();
-                            List<JobRealData> reg = JobDataProcessing.GetDataList(data, endtTime);
+                            List<JobRealData> reg = JobDataProcessing.GetDataList(data,v, endtTime);
                             // 60分钟时间粒度
                             redisProvider.RPush($"r_60_{type}_{v}_{key}", reg);
                             //redisProvider.KeyExpire($"r_60_{type}_{v}_{key}", (int)KeyExpireTime.realData);
                             //_logger.LogInformation($"{key}大厅,1小时时间粒度,版本{v},类别:{type}");
                         }
-                        List<JobRealData> areg = JobDataProcessing.GetDataList(tdata, endtTime);
-                        // 60分钟时间粒度
-                        redisProvider.RPush($"r_60_{type}_{key}", areg);
-                        //redisProvider.KeyExpire($"r_60_{type}_{key}", (int)KeyExpireTime.realData);
                         _logger.LogInformation($"{key}大厅,1小时时间粒度,类别:{type}");
                     }
                     #region 一个小时的数据去重
@@ -82,7 +82,7 @@ namespace DataStatistics.Service.Quartz.Jobs
                     //获取一个小时内所有数据
                     var hourData = redisProvider.LRange<UserActionModel>($"{key}_t{distime}", 0, length);
                     var active = hourData.Where(i => i.uid != 0).ToList();
-                    var register = hourData.Where(i => i.uid == 0).ToList();
+                    var register = hourData.Where(i => i.uid == 0 && !string.IsNullOrEmpty(i.uuid)).ToList();
                     if (active.Count>0)
                     {
                         var disact = active.GroupBy(i => new { i.version ,i.type,i.uid,i.platForm,i.areaid }).Select(i => new UserActionModel()
@@ -101,7 +101,22 @@ namespace DataStatistics.Service.Quartz.Jobs
                         redisProvider.LRem($"{key}_t{distime}",0,length);
                         redisProvider.RPush($"{key}_t{distime}",disact);
                     }
-               
+                    if (register.Count>0)
+                    {
+                        var disact = active.GroupBy(i => new { i.version, i.type, i.uuid, i.platForm, i.areaid }).Select(i => new UserActionModel()
+                        {
+                            id = i.FirstOrDefault().id,
+                            type = i.Key.type,
+                            uid = 0,
+                            date = i.FirstOrDefault().date,
+                            platForm = i.Key.platForm,
+                            version = i.Key.version,
+                            areaid = i.Key.areaid,
+                            uuid=i.Key.uuid
+                            //device=i.FirstOrDefault().device,
+                            //packageChannel=i.FirstOrDefault()?.packageChannel
+                        }).ToList();
+                    }
                  
                     #endregion
                 }

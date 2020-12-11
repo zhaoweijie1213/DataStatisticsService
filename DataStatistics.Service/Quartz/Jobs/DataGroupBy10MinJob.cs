@@ -40,7 +40,7 @@ namespace DataStatistics.Service.Quartz.Jobs
         {
             try
             {
-                DateTime time = DateTime.Now;
+                DateTime time = DateTime.Now.AddMinutes(-10);
                 DateTime endtTime = Convert.ToDateTime(time.ToString("yyyy-MM-dd HH:mm:00"));
                 //5分钟
                 DateTime startTime = endtTime.AddMinutes(-10);
@@ -70,19 +70,19 @@ namespace DataStatistics.Service.Quartz.Jobs
                     foreach (var type in dataType)
                     {
                         var tdata = all_data.Where(i => i.type == type).ToList();
+                        List<JobRealData> areg = JobDataProcessing.GetDataList(tdata, "", endtTime);
+                        // 10分钟时间粒度
+                        redisProvider.RPush($"r_10_{type}_{key}", areg);
+                        //redisProvider.KeyExpire($"r_10_{type}_{key}", (int)KeyExpireTime.realData);
                         foreach (var v in vList)
                         {
                             var data = tdata.Where(i => i.version == v).ToList();
-                            List<JobRealData> reg = JobDataProcessing.GetDataList(data, endtTime);
+                            List<JobRealData> reg = JobDataProcessing.GetDataList(data,v, endtTime);
                             // 10分钟时间粒度
                             redisProvider.RPush($"r_10_{type}_{v}_{key}", reg);
                             //redisProvider.KeyExpire($"r_10_{type}_{v}_{key}", (int)KeyExpireTime.realData);
                             //_logger.LogInformation($"{key}大厅,10分钟时间粒度,版本{v},类别:{type}");
                         }
-                        List<JobRealData> areg = JobDataProcessing.GetDataList(tdata, endtTime);
-                        // 10分钟时间粒度
-                        redisProvider.RPush($"r_10_{type}_{key}", areg);
-                        //redisProvider.KeyExpire($"r_10_{type}_{key}", (int)KeyExpireTime.realData);
                         _logger.LogInformation($"{key}大厅,10分钟时间粒度,类别:{type}");
                     }
                  

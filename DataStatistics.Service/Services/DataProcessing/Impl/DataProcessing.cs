@@ -35,17 +35,34 @@ namespace DataStatistics.Service.Services.DataProcessingl.Impl
         /// </summary>
         /// <param name="model"></param>
         [CapSubscribe("user_action_cap_1")]
-        public void SubscribeWithnoController(UserActionModel model)
+        public void SubscribeWithnoController(ReciveUserActionModel model)
         {
             try
             {
-                List<UserActionModel> list = new List<UserActionModel>
-                {
-                    model
-                };
-                _logger.LogInformation($"SubscribeWithnoController:收到数据向Redis添加:{model.areaid}大厅,{model.type}类型,{model.platForm}");
+                List<UserActionModel> list = new List<UserActionModel>();
+                _logger.LogDebug($"SubscribeWithnoController:收到数据向Redis添加:{model.areaid}大厅,{model.type}类型,{model.platForm}平台,{model.version}版本,时间:{model.date},系统时间{DateTime.Now}");
                 //向rides list添加元素
                 DateTime time = model.date;
+                //获取uuid
+                string config = model.data;
+                JObject jo = JsonConvert.DeserializeObject<JObject>(config);
+                string uuid = " ";
+                if (jo.Property("UUID")!=null)
+                {
+                    uuid = jo["UUID"].ToString();
+                }
+                
+                UserActionModel user = new UserActionModel()
+                { 
+                    id=model.id,
+                    areaid=model.areaid,
+                    date=model.date,
+                    uid=model.uid,
+                    version=model.version,
+                    uuid=uuid,
+                    platForm=model.platForm,
+                    type=model.type
+                };
                 string ktime = "";
                 if (time.Minute>0)
                 {
@@ -54,14 +71,34 @@ namespace DataStatistics.Service.Services.DataProcessingl.Impl
                 else
                 {
                     ktime = time.ToString("yyyyMMddHH");
-                } 
+                }
+                list.Add(user);
                 _cache._redisProvider.RPush($"{model.areaid}_t{ktime}", list);
                 Random rand = new Random();
-                int second = (int)KeyExpireTime.realData + rand.Next(5,10);
+                //7天保存
+                int second = 7*((int)KeyExpireTime.realData);
                 _cache._redisProvider.KeyExpire($"{model.areaid}_t{ktime}", second);
-                //大厅参数
-                //string config = model.data;
-                //JObject jo = JsonConvert.DeserializeObject<JObject>(config);
+
+                var checkAct = _repository.QueryByContion(model.areaid, model.uid, model.type, model.platForm,model.version, uuid);
+                if (checkAct==null)
+                {
+                    UserActionStatisticsModel actStat = new UserActionStatisticsModel()
+                    {
+                        areaid = model.areaid,
+                        type = model.type,
+                        platForm = model.platForm==null?" ":model.platForm,
+                        uid = model.uid,
+                        uuid = uuid,
+                        added = model.date,
+                        version=model.version==null?" ":model.version
+                    };
+                    List<UserActionStatisticsModel> stlist = new List<UserActionStatisticsModel>();
+                    if (!string.IsNullOrEmpty(uuid)||actStat.uid!=0)
+                    {
+                        stlist.Add(actStat);
+                        _repository.Insert(stlist);
+                    }
+                }
                 //List<string> keys = new List<string>();
                 //string configKeys;
                 //foreach (var item in jo)
