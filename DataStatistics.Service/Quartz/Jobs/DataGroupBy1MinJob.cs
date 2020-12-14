@@ -74,7 +74,7 @@ namespace DataStatistics.Service.Quartz.Jobs
                         //所有版本
                         List<JobRealData> areg = JobDataProcessing.GetDataList(tdata, "", endtTime);
                         redisProvider.RPush($"r_1_{type}_{key}", areg);
-                        _logger.LogInformation($"统计数据{JsonConvert.SerializeObject(areg)}");
+                        //_logger.LogInformation($"统计数据{JsonConvert.SerializeObject(areg)}");
                         foreach (var v in vList)
                         {
                             var data = tdata.Where(i => i.version == v).ToList();
@@ -82,7 +82,7 @@ namespace DataStatistics.Service.Quartz.Jobs
                             //1分钟时间粒度 分版本
                             redisProvider.RPush($"r_1_{type}_{v}_{key}", reg);
                             //redisProvider.KeyExpire($"r_1_{type}_{v}_{key}", (int)KeyExpireTime.realData);
-                            _logger.LogInformation($"统计数据{v}版本{JsonConvert.SerializeObject(reg)}");
+                            //_logger.LogInformation($"统计数据{v}版本{JsonConvert.SerializeObject(reg)}");
                         }
                         //redisProvider.KeyExpire($"r_1_{type}_{key}", (int)KeyExpireTime.realData);
                         _logger.LogInformation($"{key}大厅,1分钟时间粒度,类别:{type}");
