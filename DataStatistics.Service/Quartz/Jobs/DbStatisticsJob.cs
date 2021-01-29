@@ -116,7 +116,7 @@ namespace DataStatistics.Service.Quartz.Impl
             {
                 areaid = key,
                 activeUsers = vdata.Where(i => i.uid != 0).GroupBy(i=>i.uid).Count(),
-                registeredUsers = vdata.Where(i => i.uid == 0 && !string.IsNullOrEmpty(i.uuid)).GroupBy(i=>i.uuid).Count(),
+                registeredUsers = vdata.Where(i => i.uid == 0 && !string.IsNullOrWhiteSpace(i.uuid)).GroupBy(i=>i.uuid).Count(),
                 platForm = PlatFromEnum.All.GetName(),
                 dataTime = startTime,
                 type = type
@@ -127,7 +127,7 @@ namespace DataStatistics.Service.Quartz.Impl
             {
                 areaid = key,
                 activeUsers = vdata.Where(i => i.uid != 0 && i.platForm?.ToLower() == PlatFromEnum.Windows.GetName().ToLower()).GroupBy(i=>i.uid).Count(),
-                registeredUsers = vdata.Where(i => i.uid == 0 && i.platForm?.ToLower() == PlatFromEnum.Windows.GetName().ToLower()&&!string.IsNullOrEmpty(i.uuid)).GroupBy(i => i.uuid).Count(),
+                registeredUsers = vdata.Where(i => i.uid == 0 && i.platForm?.ToLower() == PlatFromEnum.Windows.GetName().ToLower()&&!string.IsNullOrWhiteSpace(i.uuid)).GroupBy(i => i.uuid).Count(),
                 platForm = PlatFromEnum.Windows.GetName(),
                 dataTime = startTime,
                 type=type
@@ -138,7 +138,7 @@ namespace DataStatistics.Service.Quartz.Impl
             {
                 areaid = key,
                 activeUsers = vdata.Where(i => i.uid != 0 && i.platForm?.ToLower() == PlatFromEnum.IOS.GetName().ToLower()).GroupBy(i => i.uid).Count(),
-                registeredUsers = vdata.Where(i => i.uid == 0 && i.platForm?.ToLower() == PlatFromEnum.IOS.GetName().ToLower() && !string.IsNullOrEmpty(i.uuid)).GroupBy(i => i.uuid).Count(),
+                registeredUsers = vdata.Where(i => i.uid == 0 && i.platForm?.ToLower() == PlatFromEnum.IOS.GetName().ToLower() && !string.IsNullOrWhiteSpace(i.uuid)).GroupBy(i => i.uuid).Count(),
                 platForm = PlatFromEnum.IOS.GetName(),
                 dataTime = startTime,
                 type = type
@@ -149,7 +149,7 @@ namespace DataStatistics.Service.Quartz.Impl
             {
                 areaid = key,
                 activeUsers = vdata.Where(i => i.uid != 0 && i.platForm?.ToLower() == PlatFromEnum.Android.GetName().ToLower()).GroupBy(i => i.uid).Count(),
-                registeredUsers = vdata.Where(i => i.uid == 0 && i.platForm?.ToLower() == PlatFromEnum.Android.GetName().ToLower() && !string.IsNullOrEmpty(i.uuid)).GroupBy(i => i.uuid).Count(),
+                registeredUsers = vdata.Where(i => i.uid == 0 && i.platForm?.ToLower() == PlatFromEnum.Android.GetName().ToLower() && !string.IsNullOrWhiteSpace(i.uuid)).GroupBy(i => i.uuid).Count(),
                 platForm = PlatFromEnum.Android.GetName(),
                 dataTime = startTime,
                 type = type

@@ -22,7 +22,7 @@ namespace DataStatistics.Service.Services.Common
         public static List<JobRealData> GetDataList(List<UserActionModel> data,string version, DateTime time)
         {
             //注册用户
-            var reg_data = data.Where(i=>i.uid==0&&!string.IsNullOrEmpty(i.uuid));
+            var reg_data = data.Where(i=>i.uid==0&&!string.IsNullOrWhiteSpace(i.uuid));
             List<JobRealData> reg = new List<JobRealData>();
             if (string.IsNullOrEmpty(version))
             {

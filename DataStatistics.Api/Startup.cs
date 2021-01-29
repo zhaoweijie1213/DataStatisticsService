@@ -171,7 +171,7 @@ namespace DataStatistics.Api
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "DataStatisticsService V1");
             });
 
-            //强制执行https
+            //执行https
             //app.UseHttpsRedirection();
 
             app.UseRouting();

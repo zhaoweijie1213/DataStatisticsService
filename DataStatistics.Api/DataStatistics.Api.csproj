@@ -9,6 +9,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>DataStatistics.Api.xml</DocumentationFile>
+    <WarningLevel>5</WarningLevel>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,10 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DotNetCore.CAP" Version="3.1.1" />
-    <PackageReference Include="DotNetCore.CAP.Dashboard" Version="3.1.1" />
-    <PackageReference Include="DotNetCore.CAP.MySql" Version="3.1.1" />
-    <PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="3.1.1" />
+    <PackageReference Include="DotNetCore.CAP" Version="3.1.2" />
+    <PackageReference Include="DotNetCore.CAP.Dashboard" Version="3.1.2" />
+    <PackageReference Include="DotNetCore.CAP.MySql" Version="3.1.2" />
+    <PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="3.1.2" />
     <PackageReference Include="EasyCaching.Core" Version="1.1.0" />
     <PackageReference Include="EasyCaching.Redis" Version="1.1.0" />
     <PackageReference Include="EasyCaching.Serialization.Json" Version="1.1.0" />
@@ -40,6 +41,12 @@
 
   <ItemGroup>
     <Folder Include="Model\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="config\log4net.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
